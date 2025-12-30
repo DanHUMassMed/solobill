@@ -1,0 +1,13 @@
+Hi {{ client.billing_representative | default('Billing Team') }},
+
+Please find the following invoice(s) attached for {{ client.client_name }}:
+
+{% for inv in selectedInvoices -%}
+- Invoice #{{ inv.invoiceNumber }} ({{ inv.date | formatDate }}) - ${{ inv.totalAmount | fixed }}
+{% endfor %}
+
+Total Amount: ${{ totalAmount | fixed }}
+
+Best regards,
+{{ consultant.name }}
+{{ consultant.email }}
