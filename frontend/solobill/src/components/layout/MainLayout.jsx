@@ -106,7 +106,7 @@ export default function MainLayout({ children }) {
   const getCurrentTitle = () => {
       if (location.pathname === '/admin') return 'Admin';
       const current = menuItems.find(item => item.path === location.pathname);
-      return current ? current.text : 'SoloBill!!!';
+      return current ? current.text : 'SoloBill';
   };
 
   return (
