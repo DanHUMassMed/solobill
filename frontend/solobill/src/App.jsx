@@ -5,7 +5,9 @@ import Dashboard from './pages/Dashboard';
 import ConsultantInfo from './pages/ConsultantInfo';
 import PWABadge from './PWABadge.jsx';
 
-import Clients from './pages/Clients';
+import Clients from './pages/clients/Clients';
+
+import Projects from './pages/projects/Projects';
 
 // Simple placeholder for other pages
 const Placeholder = ({ title }) => (
@@ -23,7 +25,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/consultant" element={<ConsultantInfo />} />
           <Route path="/clients" element={<Clients />} />
-          <Route path="/projects" element={<Placeholder title="Projects" />} />
+          <Route path="/projects" element={<Projects />} />
           <Route path="/invoices" element={<Placeholder title="Invoices" />} />
           <Route path="/email" element={<Placeholder title="Email" />} />
           <Route path="/admin" element={<Placeholder title="Admin" />} />
