@@ -1,4 +1,3 @@
-
 # Product Requirements Document (PRD) – Invoice PWA
 
 ## Overview
@@ -18,17 +17,18 @@ The dashboard provides a high-level view of business metrics, trends, and recent
 **Dashboard Components:**
 
 - **Key Metrics Cards:**
-    - Monthly Revenue
-    - Monthly Hours Worked
-    - Active Projects
-    - Total Clients
 
+  - Monthly Revenue
+  - Monthly Hours Worked
+  - Active Projects
+  - Total Clients
 - **Charts:**
-    - Revenue & Hours Trends (Last 6 months)
-    - Revenue by Client (donut or pie chart)
 
+  - Revenue & Hours Trends (Last 6 months)
+  - Revenue by Client (donut or pie chart)
 - **Recent Activity:**
-    - Recent invoices with client, invoice number, date, and amount
+
+  - Recent invoices with client, invoice number, date, and amount
     Quick links to view invoice details
 
 **UI Considerations:**
@@ -43,7 +43,6 @@ The dashboard provides a high-level view of business metrics, trends, and recent
     - Recent invoices fetched via invoiceRepository with sorting by date
     - Computed totals for revenue and hours
     - Data updates in real-time as invoices are added or updated
-
 
 ### 1. Consultant Management
 
@@ -198,7 +197,7 @@ The app will include built-in templates for email and invoice generation. Future
 ### 6. Technical Stack & Tools
 
 * **Platform:** Progressive Web App (PWA) for desktop and mobile browsers
-* **Frontend:** React.js (TSX components)
+* **Frontend:** React.js (TSX components) using MUI
 * **Backend:** Optional Node.js / serverless for persistence
 * **Storage:** Dexie.js (IndexedDB wrapper) with repository layer
 * **Repositories:** Abstract database operations for invoices, clients, projects, consultants
@@ -293,5 +292,3 @@ projectRepository.getByClient(clientId)
 ```
 
 ---
-
-
