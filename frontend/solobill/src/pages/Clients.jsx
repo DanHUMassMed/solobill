@@ -25,6 +25,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { clientRepo } from '../db/repositories/clientRepository';
 import AdditionalFields from '../components/common/AdditionalFields';
+import { ClientValidator } from '../utils/validation';
 
 export default function Clients() {
   const [clients, setClients] = useState([]);
@@ -34,6 +35,7 @@ export default function Clients() {
   const [additionalFields, setAdditionalFields] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, id: null });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     loadClients();
@@ -50,6 +52,7 @@ export default function Clients() {
   };
 
   const handleOpenDialog = (client = null) => {
+    setErrors({});
     if (client) {
       setCurrentClient(client);
       try {
@@ -77,16 +80,24 @@ export default function Clients() {
     setOpenDialog(false);
     setCurrentClient(null);
     setAdditionalFields([]);
+    setErrors({});
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCurrentClient(prev => ({ ...prev, [name]: value }));
+    // Clear error for this field when user types
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleSave = async () => {
-    if (!currentClient.name || !currentClient.addressL1 || !currentClient.contactNm) {
-      showSnackbar('Please fill in required fields (Name, Address L1, Contact Name)', 'warning');
+    const { isValid, errors: validationErrors } = ClientValidator.validate(currentClient);
+
+    if (!isValid) {
+      setErrors(validationErrors);
+      showSnackbar('Please fix the errors before saving', 'warning');
       return;
     }
 
@@ -233,7 +244,8 @@ export default function Clients() {
               onChange={handleChange}
               fullWidth
               required
-              helperText="Bill To Name on the Invoice"
+              error={!!errors.name}
+              helperText={errors.name || "Bill To Name on the Invoice"}
             />
             <TextField
               label="Address Line 1"
@@ -242,7 +254,8 @@ export default function Clients() {
               onChange={handleChange}
               fullWidth
               required
-              helperText="Bill To Address Line 1 on the Invoice"
+              error={!!errors.addressL1}
+              helperText={errors.addressL1 || "Bill To Address Line 1 on the Invoice"}
             />
             <TextField
               label="Address Line 2"
@@ -266,7 +279,8 @@ export default function Clients() {
               onChange={handleChange}
               fullWidth
               required
-              helperText="Bill To Name on the Invoice"
+              error={!!errors.contactNm}
+              helperText={errors.contactNm || "Bill To Name on the Invoice"}
             />
             <TextField
               label="Billing Representative Name"
@@ -282,7 +296,8 @@ export default function Clients() {
               value={currentClient?.billingRepEmail || ''}
               onChange={handleChange}
               fullWidth
-              helperText="Billing Representative Email for sending the Invoice"
+              error={!!errors.billingRepEmail}
+              helperText={errors.billingRepEmail || "Billing Representative Email for sending the Invoice"}
             />
             
             <AdditionalFields 
