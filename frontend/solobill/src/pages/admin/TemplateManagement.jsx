@@ -38,52 +38,7 @@ import { useNavigate } from 'react-router-dom';
 import { templateRepo } from '../../db/repositories/templateRepository';
 import { ValidationRules } from '../../utils/validation';
 import nunjucks from 'nunjucks';
-
-// Mock data for preview
-const mockData = {
-  consultant: {
-    name: 'Daniel Higgins',
-    email: 'dan@example.com',
-    addressL1: '18 Winifred\'s Way',
-    addressL2: '',
-    addressL3: '',
-  },
-  client: {
-    name: 'UMass Chan Medical School',
-    addressL1: '373 Plantation Street',
-    addressL2: 'Worcester, MA 01605',
-    addressL3: '',
-    contactNm: 'Jane Smith',
-    billingRepName: 'Accounts Payable',
-    billingRepEmail: 'ap@umassmed.edu',
-  },
-  project: {
-    name: 'R01 Dual (speed type: 131753)',
-    poNumber: 'PO-12345',
-    contractingTitle: 'Bioinformatics Support',
-    contractingRate: 80,
-    contractingDesc: 'Microscopy image analysis and development.',
-  },
-  invoice: {
-    id: 'inv_mock_001',
-    invoiceNumber: '20250001',
-    date: new Date().toISOString(),
-    invoiceDate: new Date().toISOString(),
-    po_number: 'PO-12345',
-    clientName: 'UMass Chan Medical School',
-    projectName: 'R01 Dual (speed type: 131753)',
-    totalHours: 40,
-    totalAmount: 3200,
-    consulting_title: 'Bioinformatics Support',
-    consulting_rate: 80,
-    client_address_l1: '373 Plantation Street',
-    billing_representative: 'Accounts Payable',
-    invoiceLineItems: [
-      { id: 1, dateDesc: '2025-12-01', workDesc: 'Data analysis and visualization', hours: 20 },
-      { id: 2, dateDesc: '2025-12-02', workDesc: 'Plugin development for ImageJ', hours: 20 },
-    ]
-  }
-};
+import { mockInvoice } from '../../utils/mockData';
 
 // Configure Nunjucks
 const env = new nunjucks.Environment();
@@ -94,6 +49,15 @@ env.addFilter('formatDate', (str) => {
 env.addFilter('fixed', (num) => {
   if (num === undefined || num === null) return '0.00';
   return parseFloat(num).toFixed(2);
+});
+env.addFilter('currency', (value) => {
+  if (value == null || isNaN(value)) return '$0.00';
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(value);
 });
 
 const TemplateManagement = () => {
@@ -238,7 +202,7 @@ const TemplateManagement = () => {
   const renderPreviewContent = () => {
     if (!currentTemplate) return null;
     try {
-      const rendered = env.renderString(currentTemplate.content, mockData);
+      const rendered = env.renderString(currentTemplate.content, mockInvoice);
       return <div dangerouslySetInnerHTML={{ __html: rendered }} />;
     } catch (error) {
       return <Alert severity="error">Error rendering template: {error.message}</Alert>;

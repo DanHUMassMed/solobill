@@ -32,7 +32,7 @@ export default function ProjectDialog({ open, onClose, onSave, project, clients 
         setFormData(project);
         try {
           setAdditionalFields(project.additionalFields ? JSON.parse(project.additionalFields) : []);
-        } catch (e) {
+        } catch {
           setAdditionalFields([]);
         }
       } else {

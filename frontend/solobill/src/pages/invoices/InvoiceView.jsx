@@ -56,7 +56,15 @@ export default function InvoiceView() {
             const n = Number(num);
             return isNaN(n) ? '0.00' : n.toFixed(2);
         });
+        env.addFilter('currency', (value) => {
+          if (value == null || isNaN(value)) return '$0.00';
 
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          }).format(value);
+        });
         // Prepare Data Context
         const rate = Number(invoice.project.contractingRate) || 0;
         const totalHours = invoice.invoiceLineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);

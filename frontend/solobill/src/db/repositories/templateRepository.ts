@@ -58,13 +58,6 @@ export class TemplateRepository extends BaseRepository<Template, string> {
         isActive: true,
       },
       {
-        id: 'default-invoice-2',
-        name: 'System Default Invoice 2',
-        type: 'invoice',
-        file: 'invoice_template2.html',
-        isActive: false,
-      },
-      {
         id: 'default-email',
         name: 'System Default Email',
         type: 'email',

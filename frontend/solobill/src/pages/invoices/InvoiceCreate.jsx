@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Box, 
   Typography, 
@@ -36,7 +36,7 @@ export default function InvoiceCreate() {
   const navigate = useNavigate();
 
   const [selectedProjectId, setSelectedProjectId] = useState('');
-  const [invoiceNumber, setInvoiceNumber] = useState(generateInvoiceNumber());
+  const [invoiceNumber] = useState(generateInvoiceNumber());
   const [lineItems, setLineItems] = useState([
     { id: crypto.randomUUID(), dateDesc: '', workDesc: '', hours: '' }
   ]);

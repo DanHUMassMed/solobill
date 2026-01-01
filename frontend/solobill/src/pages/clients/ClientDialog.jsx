@@ -32,7 +32,7 @@ export default function ClientDialog({ open, onClose, onSave, client }) {
         setFormData(client);
         try {
           setAdditionalFields(client.additionalFields ? JSON.parse(client.additionalFields) : []);
-        } catch (e) {
+        } catch {
           setAdditionalFields([]);
         }
       } else {

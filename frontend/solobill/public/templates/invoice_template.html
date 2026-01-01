@@ -11,12 +11,13 @@
         .consultant-info h2 { margin: 0; color: #1976d2; }
         .consultant-info p { margin: 2px 0; font-size: 0.9em; }
         
-        .bill-to { margin-bottom: 30px; }
-        .bill-to small { color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        .bill-to h3 { margin: 5px 0; }
+        .bill-to { margin-bottom: 20px; }
+        .bill-to h3 { margin: 2px 0; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .bill-to h4 { margin: 2px 0; }
+        .bill-to p { margin: 2px 0; font-size: 0.9em; }
         
         .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-        .invoice-meta { text-align: right; }
+        .invoice-meta { text-align: left; }
         .invoice-meta p { margin: 5px 0; }
         
         .project-highlight { background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #1976d2; }
@@ -43,63 +44,63 @@
         <div class="header">
             <div>
                 <h1 style="color: #1976d2; margin: 0; font-size: 2.5em;">INVOICE</h1>
-                <p style="margin: 0; color: #666;">#{{ invoice.invoiceNumber }}</p>
+                <div class="invoice-meta">
+                    <p><strong>Invoice #:</strong> {{ invoice.invoiceNumber }}</p>
+                    <p><strong>Date:</strong> {{ invoice.invoiceDate | formatDate }}</p>
+                    <p><strong>PO #:</strong> {{ invoice.project.poNumber }}</p>
+                </div>
             </div>
             <div class="consultant-info">
-                <h2>{{ invoice.consultant_name or consultant.name }}</h2>
-                <p>{{ invoice.consultant_address_l1 or consultant.address_l1 }}</p>
-                <p>{{ invoice.consultant_address_l2 or consultant.address_l2 }}</p>
-                {% set c_addr3 = invoice.consultant_address_l3 if invoice.consultant_address_l3 is defined else consultant.address_l3 %}
+                <h2>{{ invoice.consultant.name }}</h2>
+                <p>{{ invoice.consultant.addressL1 }}</p>
+                <p>{{ invoice.consultant.addressL2 }}</p>
+                {% set c_addr3 = invoice.consultant.addressL3 if invoice.consultant.addressL3 is defined else '' %}
                 {% if c_addr3 %}<p>{{ c_addr3 }}</p>{% endif %}
-                <p><strong>{{ invoice.consultant_email or consultant.email }}</strong></p>
             </div>
         </div>
 
         <div class="details-grid">
             <div class="bill-to">
-                <small>BILL TO</small>
-                <h3>{{ invoice.clientName or client.client_name }}</h3>
-                <p style="margin: 5px 0;">
-                    {{ invoice.client_address_l1 or client.client_address_l1 }}<br>
-                    {{ invoice.client_address_l2 or client.client_address_l2 }}<br>
-                    {% set cl_addr3 = invoice.client_address_l3 if invoice.client_address_l3 is defined else client.client_address_l3 %}
+                <h3>BILL TO:</h3>
+                <h4>{{ invoice.client.name }}</h4>
+                <p>{{ invoice.client.addressL1 }}
+                <p>{{ invoice.client.addressL2 }}</p>
+                <p>
+                    {% set cl_addr3 = invoice.client.addressL3 if invoice.client.addressL3 is defined else '' %}
                     {% if cl_addr3 %}{{ cl_addr3 }}{% endif %}
                 </p>
             </div>
-            <div class="invoice-meta">
-                <p><strong>Date:</strong> {{ invoice.date | formatDate }}</p>
-                <p><strong>Project:</strong> {{ invoice.projectName or project.project_name }}</p>
-                <p><strong>PO #:</strong> {{ invoice.po_number or 'TBD' }}</p>
-            </div>
+
         </div>
 
         <div class="project-highlight">
             <h4>Service Description</h4>
-            <p style="margin: 0; font-weight: bold; font-size: 1.1em;">{{ invoice.consulting_title or project.consulting_title }}</p>
-            {% set b_desc = invoice.bill_description if invoice.bill_description is defined else project.bill_description %}
+            <p style="margin: 0; font-weight: bold; font-size: 1.1em;">{{ invoice.project.contractingTitle }}</p>
+            {% set b_desc = invoice.project.billDescription %}
             {% if b_desc %}
             <p style="margin: 10px 0 0 0; font-size: 0.9em; color: #555;">{{ b_desc }}</p>
             {% endif %}
-            <p style="margin: 10px 0 0 0; font-size: 0.9em;"><strong>Rate:</strong> ${{ invoice.consulting_rate or project.consulting_rate }}/hr</p>
+            <p style="margin: 10px 0 0 0; font-size: 0.9em;"><strong>Rate:</strong> ${{ invoice.project.contractingRate }}/hr</p>
+            <p style="margin: 10px 0 0 0; font-size: 0.9em;"><strong>Project:</strong> {{ invoice.project.name }}</p>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th>Date / Service Description</th>
+                    <th>Date</th>
+                    <th>Description</th>
                     <th style="text-align: right;">Hours</th>
-                    <th style="text-align: right;">Rate</th>
                     <th style="text-align: right;">Amount</th>
                 </tr>
             </thead>
             <tbody>
-                {% set current_rate = invoice.consulting_rate or project.consulting_rate %}
+                
                 {% for item in invoice.lineItems %}
                 <tr>
-                    <td>{{ item.description }}</td>
+                    <td>{{ item.dateDesc }}</td>
+                    <td>{{ item.workDesc }}</td>
                     <td style="text-align: right;">{{ item.hours }}</td>
-                    <td style="text-align: right;">${{ current_rate }}</td>
-                    <td style="text-align: right;">${{ (item.hours * current_rate) | fixed }}</td>
+                    <td style="text-align: right;">{{ (item.hours * invoice.project.contractingRate) | currency }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -113,7 +114,7 @@
                 </div>
                 <div class="total-row grand-total">
                     <span>Amount Due:</span>
-                    <span>${{ invoice.totalAmount | fixed }}</span>
+                    <span>{{ invoice.totalAmount | currency }}</span>
                 </div>
             </div>
         </div>

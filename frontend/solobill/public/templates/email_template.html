@@ -1,13 +1,23 @@
-Hi {{ client.billing_representative | default('Billing Team') }},
+{% set first = invoices[0] %}
+{% set client = first.client %}
+{% set consultant = first.consultant %}
+{% set subject %}Please find Invoices for {{ consultant.name }}{% endset %}
 
-Please find the following invoice(s) attached for {{ client.client_name }}:
+{% set body %}Hello {{ client.billingRepName | default('Billing Team') }},
 
-{% for inv in selectedInvoices -%}
-- Invoice #{{ inv.invoiceNumber }} ({{ inv.date | formatDate }}) - ${{ inv.totalAmount | fixed }}
+Please find the following invoice{% if invoices | length > 1 %}s{% endif %} attached for services rendered {% if client.name %}to {{ client.name }}{% endif %}:
+
+{% for inv in invoices %}
+- Invoice #{{ inv.invoiceNumber }}
+  Date: {{ inv.invoiceDate | formatDate }}{% if inv.project.poNumber %}
+  PO: {{ inv.project.poNumber }}{% endif %}
 {% endfor %}
-
-Total Amount: ${{ totalAmount | fixed }}
 
 Best regards,
 {{ consultant.name }}
 {{ consultant.email }}
+{% endset %}
+
+mailto:{{ client.billingRepEmail | urlencode }}
+?subject={{ subject | urlencode }}
+&body={{ body | urlencode }}

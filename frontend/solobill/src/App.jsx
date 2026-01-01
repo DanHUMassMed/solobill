@@ -11,6 +11,7 @@ import Projects from './pages/projects/Projects';
 import Invoices from './pages/invoices/Invoices';
 import InvoiceCreate from './pages/invoices/InvoiceCreate';
 import InvoiceView from './pages/invoices/InvoiceView';
+import Email from './pages/email/Email';
 
 // Admin Pages
 import Admin from './pages/admin/Admin';
@@ -47,7 +48,7 @@ function App() {
           <Route path="/invoices/create" element={<InvoiceCreate />} />
           <Route path="/invoices/:id" element={<InvoiceView />} />
           
-          <Route path="/email" element={<Placeholder title="Email" />} />
+          <Route path="/email" element={<Email />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<Admin />} />

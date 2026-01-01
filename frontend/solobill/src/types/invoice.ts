@@ -1,5 +1,5 @@
 import { Client } from "./client";
-import { Consultant } from "./Consultant";
+import { Consultant } from "./consultant";
 import { Project } from "./project";
 
 export interface InvoiceLineItem {
@@ -24,5 +24,5 @@ export interface Invoice {
   project: Project;
   
   // Invoice Details
-  invoiceLineItems: InvoiceLineItem[];
+  lineItems: InvoiceLineItem[];
 }
