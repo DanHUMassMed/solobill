@@ -8,7 +8,13 @@ export class TemplateRepository extends BaseRepository<Template, string> {
   }
 
   async getActiveByType(type: TemplateType) {
-    return this.table.where({ type, isActive: true }).first();
+    const template = await this.table
+      .where('type')
+      .equals(type)
+      .filter(t => t.isActive === true)
+      .first();
+
+    return template;
   }
 
   async getByType(type: TemplateType) {

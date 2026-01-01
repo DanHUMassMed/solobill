@@ -7,6 +7,8 @@
 ## Overview
 
 The Invoice Management feature provides users with a structured interface to create, view, generate, copy, and delete invoices. Once generated, invoices become immutable records. The experience should align visually and functionally with existing management pages, particularly the Projects Management page.
+Client Accordion contains Projects Accordion
+Projects Accordion contains Invoices Cards
 
 ---
 
@@ -42,18 +44,37 @@ The Invoice Management feature provides users with a structured interface to cre
 ### 2. Create Invoice Page
 
 - Location: `/pages/invoices`
+- Invoice Number should be auto generated
+    export const generateInvoiceNumber = () => {
+      const date = new Date()
+        .toISOString()
+        .slice(2, 10)
+        .replace(/-/g, "");
+
+      const suffix = Math.random()
+        .toString(36)
+        .substring(2, 6)
+        .toUpperCase();
+
+      return `INV-${date}-${suffix}`;
+    };
+
 
 #### Behavior
 
 - UI should follow the provided design reference (image)
-- Allows full editing of invoice details prior to generation
-
+- Allows full editing of invoice details prior to save or generation
+- Validate invoice details before save or generation
+- Error messages should be displayed in a consistent manner (red border, red text)
+- The Save button saves and returns to the Invoice Management page
+- The Generate button generates the invoice and opens the Invoice View page
 ---
 
 ### 3. Invoice View Page
 
+- Is a read-only view of of the Generated Invoice with the print/save as pdf button
 - Location URI: `/invoices/[id]`
-- Purpose: View invoice details
+- Purpose: View invoice details allow reprinting and saving as pdf
 
 #### Behavior
 
@@ -61,32 +82,9 @@ The Invoice Management feature provides users with a structured interface to cre
 - Display invoice metadata, line items, totals, and status
 
 ---
-
-## Invoice States & Rules
-
-### Generated Invoice
-
-- Once generated:
-  - Invoice becomes **read-only**
-  - Editing is permanently disabled
-- Can be:
-  - Viewed
-  - Copied
-  - Deleted
-- Generation should be treated as a finalization step
-- Generation also saves the invoice to the database
-- Generation applies the active invoice template to the invoice
+- Once an invoice is saved it can only be copied, viewed or deleted
+- This will ensure each invoice is immutable and invoices numbers are unique
 ---
-
-## Core Actions
-
-| Action   | Create | Generated |
-| -------- | ------ | --------- |
-| View     | ✅     | ✅        |
-| Edit     | ✅     | ❌        |
-| Copy     | ✅     | ✅        |
-| Generate | ✅     | ✅        |
-| Delete   | ✅     | ✅        |
 
 ---
 
@@ -100,7 +98,6 @@ The Invoice Management feature provides users with a structured interface to cre
 
 ## Success Criteria
 
-- Users can clearly distinguish draft vs generated invoices
-- Generated invoices cannot be edited under any circumstances
+- Once an invoice is saved it can only be copied, viewed or deleted
 - Invoice Management page feels consistent with the rest of the application
 - All core invoice actions are intuitive and discoverable

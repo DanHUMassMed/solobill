@@ -8,6 +8,10 @@ import PWABadge from './PWABadge.jsx';
 import Clients from './pages/clients/Clients';
 import Projects from './pages/projects/Projects';
 
+import Invoices from './pages/invoices/Invoices';
+import InvoiceCreate from './pages/invoices/InvoiceCreate';
+import InvoiceView from './pages/invoices/InvoiceView';
+
 // Admin Pages
 import Admin from './pages/admin/Admin';
 import TemplateManagement from './pages/admin/TemplateManagement';
@@ -37,7 +41,12 @@ function App() {
           <Route path="/consultant" element={<ConsultantInfo />} />
           <Route path="/clients" element={<Clients />} />
           <Route path="/projects" element={<Projects />} />
-          <Route path="/invoices" element={<Placeholder title="Invoices" />} />
+          
+          {/* Invoice Routes */}
+          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/invoices/create" element={<InvoiceCreate />} />
+          <Route path="/invoices/:id" element={<InvoiceView />} />
+          
           <Route path="/email" element={<Placeholder title="Email" />} />
           
           {/* Admin Routes */}
