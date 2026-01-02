@@ -148,7 +148,7 @@ export default function Invoices() {
                       <AccordionDetails>
                         <Grid container spacing={2}>
                             {project.invoices.map((invoice) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={invoice.id}>
+                                <Grid xs={12} sm={6} md={4} lg={3} key={invoice.id}>
                                     <Card variant="outlined" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                                         <CardContent sx={{ flexGrow: 1 }}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>

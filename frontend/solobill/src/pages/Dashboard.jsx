@@ -146,7 +146,7 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid  xs={12} sm={6} md={3}>
           <StatCard 
             title="Monthly Revenue"
             value={formatCurrency(data.monthlyRevenue)}
@@ -155,7 +155,7 @@ export default function Dashboard() {
             color={BLUE_COLOR}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid  xs={12} sm={6} md={3}>
           <StatCard 
             title="Monthly Hours"
             value={data.monthlyHours}
@@ -164,7 +164,7 @@ export default function Dashboard() {
             color={GREEN_COLOR}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid  xs={12} sm={6} md={3}>
           <StatCard 
             title="Active Projects"
             value={data.activeProjects}
@@ -173,7 +173,7 @@ export default function Dashboard() {
             color={WARNING_COLOR}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid  xs={12} sm={6} md={3}>
           <StatCard 
             title="Total Clients"
             value={data.totalClients}
@@ -187,7 +187,7 @@ export default function Dashboard() {
       {/* Charts Grid */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {/* Trend Chart */}
-        <Grid item xs={12} md={8}>
+        <Grid  xs={12} md={8}>
           <Paper sx={{ p: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Revenue & Hours Trends (Last 6 Months)
@@ -219,7 +219,7 @@ export default function Dashboard() {
         </Grid>
 
         {/* Client Revenue Chart */}
-        <Grid item xs={12} md={4}>
+        <Grid  xs={12} md={4}>
           <Paper sx={{ p: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Revenue by Client

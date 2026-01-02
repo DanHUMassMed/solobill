@@ -228,7 +228,7 @@ const TemplateManagement = () => {
           Select the templates currently used for generation.
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Active Invoice Template</InputLabel>
               <Select
@@ -242,7 +242,7 @@ const TemplateManagement = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Active Email Template</InputLabel>
               <Select

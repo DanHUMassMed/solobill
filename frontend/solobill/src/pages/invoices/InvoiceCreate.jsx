@@ -176,19 +176,19 @@ export default function InvoiceCreate() {
                 <Box sx={{ mt: 3, p: 2, bgcolor: '#f9f9f9', borderRadius: 1 }}>
                     <Typography variant="h6" gutterBottom>Project Details</Typography>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid xs={12} sm={6}>
                             <Typography variant="body2" fontWeight="bold">Client:</Typography>
                             <Typography variant="body2">{selectedClient.name}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid xs={12} sm={6}>
                             <Typography variant="body2" fontWeight="bold">PO #:</Typography>
                             <Typography variant="body2">{selectedProject.poNumber || 'TBD'}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid xs={12} sm={6}>
                             <Typography variant="body2" fontWeight="bold">Title:</Typography>
                             <Typography variant="body2">{selectedProject.contractingTitle}</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid xs={12} sm={6}>
                             <Typography variant="body2" fontWeight="bold">Rate:</Typography>
                             <Typography variant="body2">${selectedProject.contractingRate}/hr</Typography>
                         </Grid>
