@@ -150,7 +150,7 @@ export interface Invoice {
   consultant: Consultant; // snapshot
   client: Client;         // snapshot
   project: Project;       // snapshot
-  invoiceLineItems: InvoiceLineItem[];
+  lineItems: InvoiceLineItem[];
 }
 ```
 
