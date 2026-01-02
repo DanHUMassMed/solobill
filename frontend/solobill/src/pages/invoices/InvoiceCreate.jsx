@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Box, 
   Typography, 
@@ -37,15 +37,31 @@ export default function InvoiceCreate() {
 
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [invoiceNumber] = useState(generateInvoiceNumber());
+  const [validationErrors, setValidationErrors] = useState({});
   const [lineItems, setLineItems] = useState([
     { id: crypto.randomUUID(), dateDesc: '', workDesc: '', hours: '' }
   ]);
-  const [validationErrors, setValidationErrors] = useState({});
 
 
   const selectedProject = useMemo(() => {
     return projects.find(p => p.id === selectedProjectId);
   }, [selectedProjectId, projects]);
+
+  useEffect(() => {
+    if (selectedProject) {
+      setLineItems([
+        {
+          id: crypto.randomUUID(),
+          dateDesc: '',
+          workDesc: selectedProject.contractingDesc || '',
+          hours: ''
+        }
+      ]);
+    } else {
+      // optional: reset lineItems if no project is selected
+      setLineItems([{ id: crypto.randomUUID(), dateDesc: '', workDesc: '', hours: '' }]);
+    }
+  }, [selectedProject]);
 
   const selectedClient = useMemo(() => {
     if (!selectedProject) return null;
@@ -105,6 +121,8 @@ export default function InvoiceCreate() {
         id: crypto.randomUUID(),
         invoiceNumber,
         invoiceDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+        totalHours,
+        totalAmount,
         consultant: consultant, // Snapshot
         client: selectedClient, // Snapshot
         project: selectedProject, // Snapshot
@@ -185,7 +203,7 @@ export default function InvoiceCreate() {
         <CardContent>
             <Typography variant="h6" gutterBottom>Work Log</Typography>
             <Typography variant="body2" color="textSecondary" paragraph>
-                Enter specific dates (e.g., "Oct 12, 2023") or date ranges and the hours worked.
+                Enter specific dates (e.g., "Oct 12, 2025") or date ranges and the hours worked.
             </Typography>
 
             {lineItems.map((item, index) => (

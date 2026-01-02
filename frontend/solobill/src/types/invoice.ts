@@ -13,7 +13,8 @@ export interface Invoice {
   id: string;
   invoiceNumber: string;
   invoiceDate: string; // ISO String
-  
+  totalHours: string | number;
+  totalAmount: string | number;
   // Snapshots - Consultant
   consultant: Consultant;
 

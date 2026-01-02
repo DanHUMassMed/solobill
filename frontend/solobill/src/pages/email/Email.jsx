@@ -9,6 +9,7 @@ import {
   Button, 
   List, 
   ListItem, 
+  ListItemButton,
   ListItemIcon, 
   ListItemText,
   Divider,
@@ -312,7 +313,9 @@ export default function Email() {
           label="Client"
         >
             {clients.map(client => (
-                <MenuItem key={client.id} value={client.id}>{client.name}</MenuItem>
+                <MenuItem key={client.id} value={client.id}>
+                  {client.name}
+                </MenuItem>
             ))}
         </TextField>
       </Paper>
@@ -337,10 +340,9 @@ export default function Email() {
 
                         return (
                             <React.Fragment key={invoice.id}>
-                                <ListItem
+                                <ListItemButton
                                     role={undefined}
                                     dense
-                                    button
                                     onClick={() => handleToggleInvoice(invoice.id)}
                                 >
                                     <ListItemIcon>
@@ -357,7 +359,7 @@ export default function Email() {
                                         primary={`#${invoice.invoiceNumber} - ${invoice.project.name}`}
                                         secondary={`${new Date(invoice.invoiceDate).toLocaleDateString()} | Total: $${total}`}
                                     />
-                                </ListItem>
+                                </ListItemButton>
                                 <Divider variant="inset" component="li" />
                             </React.Fragment>
                         );

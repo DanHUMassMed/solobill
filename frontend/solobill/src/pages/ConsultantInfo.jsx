@@ -111,7 +111,7 @@ export default function ConsultantInfo() {
             onChange={handleChange}
             required 
             fullWidth 
-            placeholder="e.g. Daniel Higgins"
+            placeholder="e.g. Alex Quantum"
             error={!!errors.name}
             helperText={errors.name}
         />
@@ -122,7 +122,7 @@ export default function ConsultantInfo() {
             onChange={handleChange}
             required 
             fullWidth 
-            placeholder="e.g. 19 Winifreds Way"
+            placeholder="e.g. 42 Innovation Drive"
             error={!!errors.addressL1}
             helperText={errors.addressL1}
         />
@@ -132,7 +132,7 @@ export default function ConsultantInfo() {
             value={formData.addressL2}
             onChange={handleChange}
             fullWidth 
-            placeholder="e.g. Rutland MA 01543"
+            placeholder="e.g. Futurama City, CA 90210"
         />
         <TextField 
             label="Address Line 3 (Optional)" 
@@ -148,7 +148,7 @@ export default function ConsultantInfo() {
             onChange={handleChange}
             required 
             fullWidth 
-            placeholder="e.g. dphiggins@gmail.com"
+            placeholder="e.g. alex.quantum@example.com"
             error={!!errors.email}
             helperText={errors.email}
         />
