@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Switch,
-  FormControlLabel,
-  Stack,
-  Divider
+import React, { useState, useRef } from 'react';
+import { 
+  Box, 
+  Paper, 
+  Typography, 
+  TextField, 
+  Button, 
+  Switch, 
+  FormControlLabel, 
+  Stack, 
+  Divider 
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import HistoryIcon from '@mui/icons-material/History';
+import StorageIcon from '@mui/icons-material/Storage';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import RestoreIcon from '@mui/icons-material/Restore';
 import PageHeader from '../../components/common/PageHeader';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { invoiceRepo } from '../../db/repositories/invoiceRepository';
+import { db } from '../../db/appDB';
 import { useNotification } from '../../context/NotificationContext';
 
 export default function DataManagement() {
@@ -21,6 +26,10 @@ export default function DataManagement() {
   const [endDate, setEndDate] = useState('');
   const [archive, setArchive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [restoreFile, setRestoreFile] = useState(null);
+  const [confirmRestoreOpen, setConfirmRestoreOpen] = useState(false);
+  
+  const fileInputRef = useRef(null);
   const { notify } = useNotification();
 
   const handleExport = async () => {
@@ -124,6 +133,98 @@ export default function DataManagement() {
     }
   };
 
+  const handleBackup = async () => {
+    setLoading(true);
+    try {
+      const allData = await db.transaction('r', db.tables, async () => {
+        return {
+           clients: await db.clients.toArray(),
+           projects: await db.projects.toArray(),
+           invoices: await db.invoices.toArray(),
+           templates: await db.templates.toArray(),
+           consultants: await db.consultants.toArray()
+        };
+      });
+
+      const backupData = {
+        version: '1.0',
+        timestamp: new Date().toISOString(),
+        data: allData
+      };
+
+      const jsonContent = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      const dateStr = new Date().toISOString().split('T')[0];
+      link.setAttribute('download', `solobill_backup_${dateStr}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      notify('Backup created successfully', 'success');
+    } catch (error) {
+      console.error("Backup failed", error);
+      notify('Failed to create backup', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRestoreFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setRestoreFile(file);
+      setConfirmRestoreOpen(true);
+    }
+    // Reset input so same file can be selected again if needed
+    event.target.value = '';
+  };
+
+  const handleRestore = async () => {
+    if (!restoreFile) return;
+
+    setConfirmRestoreOpen(false);
+    setLoading(true);
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const content = e.target.result;
+        const backup = JSON.parse(content);
+
+        if (!backup.data || !backup.version) {
+           throw new Error('Invalid backup file format');
+        }
+
+        await db.transaction('rw', db.tables, async () => {
+           // Clear existing tables
+           await Promise.all(db.tables.map(table => table.clear()));
+
+           // Restore data
+           const { clients, projects, invoices, templates, consultants } = backup.data;
+           
+           if (clients?.length) await db.clients.bulkAdd(clients);
+           if (projects?.length) await db.projects.bulkAdd(projects);
+           if (invoices?.length) await db.invoices.bulkAdd(invoices);
+           if (templates?.length) await db.templates.bulkAdd(templates);
+           if (consultants?.length) await db.consultants.bulkAdd(consultants);
+        });
+
+        notify('System restored successfully', 'success');
+        setRestoreFile(null);
+      } catch (error) {
+        console.error("Restore failed", error);
+        notify(`Restore failed: ${error.message}`, 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    reader.readAsText(restoreFile);
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <PageHeader 
@@ -131,7 +232,7 @@ export default function DataManagement() {
         subtitle="Export records for annual reporting or perform full system backups."
       />
 
-      <Paper sx={{ p: 3, maxWidth: 800 }}>
+      <Paper sx={{ p: 3, maxWidth: 800, mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
             <HistoryIcon color="primary" />
             <Typography variant="h6">Invoice Archive (CSV)</Typography>
@@ -184,6 +285,59 @@ export default function DataManagement() {
             </Button>
         </Box>
       </Paper>
+
+      {/* System Migration Section */}
+      <Paper sx={{ p: 3, maxWidth: 800 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <StorageIcon color="primary" />
+            <Typography variant="h6">System Migration (JSON)</Typography>
+        </Box>
+        <Typography variant="body2" color="text.secondary" paragraph>
+            Export your entire database (Clients, Projects, Invoices, Templates) to a single file for migration or full backup.
+        </Typography>
+
+        <Divider sx={{ my: 3 }} />
+
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <Button
+                variant="outlined"
+                startIcon={<CloudUploadIcon />}
+                onClick={handleBackup}
+                disabled={loading}
+            >
+                BACKUP ALL DATA
+            </Button>
+            
+            <input 
+                type="file" 
+                accept=".json" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                onChange={onRestoreFileChange}
+            />
+            
+            <Button
+                variant="outlined"
+                color="warning"
+                startIcon={<RestoreIcon />}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={loading}
+            >
+                RESTORE FROM BACKUP
+            </Button>
+        </Stack>
+      </Paper>
+
+      <ConfirmDialog
+        open={confirmRestoreOpen}
+        onClose={() => setConfirmRestoreOpen(false)}
+        onConfirm={handleRestore}
+        title="Confirm Restore"
+        message="This will overwrite all current data with the backup file. This action cannot be undone. Are you sure?"
+        confirmText="Restore Data"
+        confirmColor="warning"
+      />
     </Box>
   );
 }
+

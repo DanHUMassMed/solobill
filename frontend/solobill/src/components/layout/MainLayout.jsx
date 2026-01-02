@@ -96,7 +96,7 @@ export default function MainLayout({ children }) {
 
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Consultant Info', icon: <PersonIcon />, path: '/consultant' },
+    { text: 'Consultant', icon: <PersonIcon />, path: '/consultant' },
     { text: 'Clients', icon: <PeopleIcon />, path: '/clients' },
     { text: 'Projects', icon: <WorkIcon />, path: '/projects' },
     { text: 'Invoices', icon: <ReceiptIcon />, path: '/invoices' },
