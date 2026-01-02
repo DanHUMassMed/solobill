@@ -15,6 +15,8 @@ import HistoryIcon from '@mui/icons-material/History';
 import StorageIcon from '@mui/icons-material/Storage';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import RestoreIcon from '@mui/icons-material/Restore';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import WarningIcon from '@mui/icons-material/Warning';
 import PageHeader from '../../components/common/PageHeader';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { invoiceRepo } from '../../db/repositories/invoiceRepository';
@@ -28,6 +30,7 @@ export default function DataManagement() {
   const [loading, setLoading] = useState(false);
   const [restoreFile, setRestoreFile] = useState(null);
   const [confirmRestoreOpen, setConfirmRestoreOpen] = useState(false);
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   
   const fileInputRef = useRef(null);
   const { notify } = useNotification();
@@ -225,6 +228,22 @@ export default function DataManagement() {
     reader.readAsText(restoreFile);
   };
 
+  const handleReset = async () => {
+    setConfirmResetOpen(false);
+    setLoading(true);
+    try {
+        await db.transaction('rw', db.tables, async () => {
+            await Promise.all(db.tables.map(table => table.clear()));
+        });
+        notify('All data has been deleted successfully', 'success');
+    } catch (error) {
+        console.error("Reset failed", error);
+        notify('Failed to delete data', 'error');
+    } finally {
+        setLoading(false);
+    }
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <PageHeader 
@@ -287,7 +306,7 @@ export default function DataManagement() {
       </Paper>
 
       {/* System Migration Section */}
-      <Paper sx={{ p: 3, maxWidth: 800 }}>
+      <Paper sx={{ p: 3, maxWidth: 800, mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
             <StorageIcon color="primary" />
             <Typography variant="h6">System Migration (JSON)</Typography>
@@ -328,6 +347,29 @@ export default function DataManagement() {
         </Stack>
       </Paper>
 
+      {/* Danger Zone */}
+      <Paper sx={{ p: 3, maxWidth: 800, border: '1px solid', borderColor: 'error.main' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <WarningIcon color="error" />
+            <Typography variant="h6" color="error">Danger Zone</Typography>
+        </Box>
+        <Typography variant="body2" color="text.secondary" paragraph>
+            Permanently delete all data from the application. This action cannot be undone. Please ensure you have a backup before proceeding.
+        </Typography>
+
+        <Divider sx={{ my: 3 }} />
+
+        <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteForeverIcon />}
+            onClick={() => setConfirmResetOpen(true)}
+            disabled={loading}
+        >
+            DELETE ALL DATA
+        </Button>
+      </Paper>
+
       <ConfirmDialog
         open={confirmRestoreOpen}
         onClose={() => setConfirmRestoreOpen(false)}
@@ -336,6 +378,16 @@ export default function DataManagement() {
         message="This will overwrite all current data with the backup file. This action cannot be undone. Are you sure?"
         confirmText="Restore Data"
         confirmColor="warning"
+      />
+
+      <ConfirmDialog
+        open={confirmResetOpen}
+        onClose={() => setConfirmResetOpen(false)}
+        onConfirm={handleReset}
+        title="Delete All Data?"
+        message="Are you absolutely sure? This will wipe all Clients, Projects, Invoices, and Templates. This action CANNOT be undone."
+        confirmText="DELETE EVERYTHING"
+        confirmColor="error"
       />
     </Box>
   );
