@@ -6,8 +6,6 @@ import {
   TextField, 
   Paper, 
   InputAdornment, 
-  Snackbar,
-  Alert,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -20,7 +18,6 @@ import {
   Card,
   CardContent,
   CardActions,
-  IconButton,
   Chip
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -32,7 +29,7 @@ import { useProjects } from '../../hooks/useProjects';
 import ProjectDialog from './ProjectDialog';
 
 export default function Projects() {
-  const { projects, clients, snackbar, closeSnackbar, saveProject, deleteProject } = useProjects();
+  const { projects, clients, saveProject, deleteProject } = useProjects();
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -231,16 +228,6 @@ export default function Projects() {
             </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar 
-        open={snackbar.open} 
-        autoHideDuration={6000} 
-        onClose={closeSnackbar}
-      >
-        <Alert severity={snackbar.severity} onClose={closeSnackbar} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

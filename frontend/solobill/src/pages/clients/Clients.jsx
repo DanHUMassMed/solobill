@@ -10,8 +10,6 @@ import {
   Card,
   CardContent,
   CardActions,
-  Snackbar,
-  Alert,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,7 +24,7 @@ import { useClients } from '../../hooks/useClients';
 import ClientDialog from './ClientDialog';
 
 export default function Clients() {
-  const { clients, snackbar, closeSnackbar, saveClient, deleteClient } = useClients();
+  const { clients, saveClient, deleteClient } = useClients();
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -176,16 +174,6 @@ export default function Clients() {
             </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar 
-        open={snackbar.open} 
-        autoHideDuration={6000} 
-        onClose={closeSnackbar}
-      >
-        <Alert severity={snackbar.severity} onClose={closeSnackbar} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

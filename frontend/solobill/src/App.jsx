@@ -4,6 +4,7 @@ import MainLayout from './components/layout/MainLayout';
 import Dashboard from './pages/Dashboard';
 import ConsultantInfo from './pages/ConsultantInfo';
 import PWABadge from './PWABadge.jsx';
+import { NotificationProvider } from './context/NotificationContext';
 
 import Clients from './pages/clients/Clients';
 import Projects from './pages/projects/Projects';
@@ -35,29 +36,31 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/consultant" element={<ConsultantInfo />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/projects" element={<Projects />} />
-          
-          {/* Invoice Routes */}
-          <Route path="/invoices" element={<Invoices />} />
-          <Route path="/invoices/create" element={<InvoiceCreate />} />
-          <Route path="/invoices/:id" element={<InvoiceView />} />
-          
-          <Route path="/email" element={<Email />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/templates" element={<TemplateManagement />} />
-          <Route path="/admin/templates/guide" element={<TemplateVariableGuide />} />
-        </Routes>
-        <PWABadge />
-      </MainLayout>
-    </Router>
+    <NotificationProvider>
+      <Router>
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/consultant" element={<ConsultantInfo />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/projects" element={<Projects />} />
+            
+            {/* Invoice Routes */}
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/invoices/create" element={<InvoiceCreate />} />
+            <Route path="/invoices/:id" element={<InvoiceView />} />
+            
+            <Route path="/email" element={<Email />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/templates" element={<TemplateManagement />} />
+            <Route path="/admin/templates/guide" element={<TemplateVariableGuide />} />
+          </Routes>
+          <PWABadge />
+        </MainLayout>
+      </Router>
+    </NotificationProvider>
   );
 }
 

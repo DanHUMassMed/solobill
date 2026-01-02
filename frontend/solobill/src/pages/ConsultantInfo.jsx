@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Paper, TextField, Button, Box, Snackbar, Alert } from '@mui/material';
+import { Typography, Paper, TextField, Button, Box } from '@mui/material';
 import { consultantRepo } from '../db/repositories/consultantRepository';
 import AdditionalFields from '../components/common/AdditionalFields';
 import { ConsultantValidator } from '../utils/validation';
+import { useNotification } from '../context/NotificationContext';
 
 export default function ConsultantInfo() {
   const [formData, setFormData] = useState({
@@ -14,8 +15,8 @@ export default function ConsultantInfo() {
   });
   const [additionalFields, setAdditionalFields] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [errors, setErrors] = useState({});
+  const { notify } = useNotification();
 
   useEffect(() => {
     const loadData = async () => {
@@ -42,14 +43,14 @@ export default function ConsultantInfo() {
         }
       } catch (error) {
         console.error("Failed to load consultant info", error);
-        showSnackbar('Failed to load information', 'error');
+        notify('Failed to load information', 'error');
       } finally {
         setLoading(false);
       }
     };
 
     loadData();
-  }, []);
+  }, [notify]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +66,7 @@ export default function ConsultantInfo() {
     
     if (!isValid) {
       setErrors(validationErrors);
-      showSnackbar('Please fix the errors before saving', 'warning');
+      notify('Please fix the errors before saving', 'warning');
       return;
     }
 
@@ -76,20 +77,12 @@ export default function ConsultantInfo() {
       };
       
       await consultantRepo.put(consultantData);
-      showSnackbar('Information saved successfully', 'success');
+      notify('Information saved successfully', 'success');
       setErrors({});
     } catch (error) {
       console.error("Failed to save consultant info", error);
-      showSnackbar('Failed to save information', 'error');
+      notify('Failed to save information', 'error');
     }
-  };
-
-  const showSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
   };
 
   if (loading) {
@@ -168,12 +161,6 @@ export default function ConsultantInfo() {
             SAVE INFORMATION
         </Button>
       </Box>
-
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Paper>
   );
 }

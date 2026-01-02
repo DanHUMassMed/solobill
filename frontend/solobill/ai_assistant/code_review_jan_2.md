@@ -1,0 +1,76 @@
+# Code Review & Refactoring Plan - Jan 2, 2026
+
+## Executive Summary
+
+The current `solobill` application demonstrates a solid foundation with a clear separation of concerns using the **Repository Pattern** for data access and **Custom Hooks** for business logic. The project structure is logical and easy to navigate. However, there is significant **code duplication** across pages and hooks, particularly regarding CRUD operations, UI layouts (headers, cards), and notification handling.
+
+This review identifies opportunities to apply **SOLID principles**—specifically the Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY)—to streamline the codebase, reduce maintenance overhead, and improve consistency.
+
+## Architecture & Design Patterns
+
+### 1. Data Access Layer (Repositories)
+*   **Status**: ✅ **Good**. The `BaseRepository` abstract class correctly handles common Dexie.js operations.
+*   **Issue**: `InvoiceRepository` introduces a `create` method to enforce business rules (immutability) but inherits the public `add` method from `BaseRepository`. This leaves a loophole where a developer could accidentally use `add` directly, bypassing validation.
+*   **Refactor**: Override `add` and `put` in `InvoiceRepository` to throw an error or redirect to `create`, ensuring the repository contract is safe.
+
+### 2. Business Logic (Hooks)
+*   **Status**: ⚠️ **Needs Improvement**. `useClients` and `useProjects` share ~80% identical logic (loading state, error handling, snackbar management, CRUD flow).
+*   **Refactor**: Implement a **Generic Resource Hook** (`useResource`) that encapsulates standard CRUD state and logic. Specialized hooks like `useProjects` can compose this generic hook and add specific requirements (like fetching associated Clients).
+
+## Component Structure & UI
+
+### 1. Page Layouts
+*   **Status**: ⚠️ **Duplicated**. Pages like `Clients.jsx` and `Projects.jsx` repeat the same layout pattern: Header with Title/Add Button, Search Bar, and Grid/List view.
+*   **Refactor**: Create a `PageHeader` component (Title + Action Buttons) and potentially a `ResourceListLayout` to standardize spacing and responsiveness.
+
+### 2. Cards & Lists
+*   **Status**: ⚠️ **Duplicated**. The `Card` components for Clients and Projects differ slightly in content but share the same structure (Title, Subtitle, Details, Action Bar).
+*   **Refactor**: Create a generic `ResourceCard` or `InfoCard` component that accepts `title`, `subtitle`, `content`, and `actions` as props. This ensures visual consistency across the app.
+
+### 3. Dialogs
+*   **Status**: ⚠️ **Duplicated**. `ClientDialog` and `ProjectDialog` reimplement the same `Dialog` wrapper, transition logic, title, and action buttons.
+*   **Refactor**: Extract a `FormDialog` wrapper component that handles the modal shell (Title, Content Area, Save/Cancel buttons). Pass the specific form fields as `children` or a render prop.
+
+### 4. Delete Confirmation
+*   **Status**: ⚠️ **Duplicated**. Every page implements its own `Dialog` state and UI for delete confirmation.
+*   **Refactor**: Create a reusable `ConfirmDialog` component.
+
+## State Management
+
+### 1. Notifications (Snackbar)
+*   **Status**: ❌ **Anti-Pattern**. Snackbar state (`open`, `message`, `severity`) and handlers are redefined in every hook and component (`useClients`, `useProjects`, `ConsultantInfo`, `Dashboard`).
+*   **Refactor**: Implement a global **Notification Context** (`NotificationProvider`) and a `useNotification` hook. This allows any component to trigger a toast with `notify('Message', 'success')` without managing local state.
+
+## Detailed Refactoring Plan
+
+### Phase 1: Core Utilities & State (High Priority)
+1.  **Notification System**:
+    *   Create `src/context/NotificationContext.jsx`.
+    *   Wrap `App.jsx` with `NotificationProvider`.
+    *   Replace local snackbar state in `ConsultantInfo` and `Dashboard` with `useNotification`.
+2.  **Generic Hooks**:
+    *   Create `src/hooks/useResource.js`.
+    *   Refactor `useClients` to use `useResource`.
+    *   Refactor `useProjects` to use `useResource` (handling the extra `clients` dependency separately).
+
+### Phase 2: UI Component Extraction (Medium Priority)
+3.  **Common Dialogs**:
+    *   Create `src/components/common/ConfirmDialog.jsx`.
+    *   Create `src/components/common/FormDialog.jsx`.
+    *   Update `Clients` and `Projects` pages to use these.
+4.  **Layout Components**:
+    *   Create `src/components/common/PageHeader.jsx`.
+    *   Create `src/components/common/ResourceCard.jsx`.
+    *   Apply to `Clients` and `Projects` pages.
+
+### Phase 3: Repository Safety (Low Priority)
+5.  **Repository Cleanup**:
+    *   Update `InvoiceRepository.ts` to disable/redirect inherited `add/put` methods.
+    *   Review `BaseRepository.ts` for any other shared utility needs.
+
+## Visual Consistency & PWA
+*   **Theme**: Ensure all hardcoded colors (e.g., `#f5f5f5`, error reds) are replaced with `theme.palette.*` references to support future Dark Mode or theming changes.
+*   **Accessibility**: Ensure the new generic components (Dialogs, Cards) typically include proper `aria-labels` and keyboard navigation support.
+
+---
+*Generated by AI Assistant on Jan 2, 2026*
