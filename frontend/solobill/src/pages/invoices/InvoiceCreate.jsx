@@ -126,7 +126,7 @@ export default function InvoiceCreate() {
         consultant: consultant, // Snapshot
         client: selectedClient, // Snapshot
         project: selectedProject, // Snapshot
-        invoiceLineItems: lineItems.map(item => ({
+        lineItems: lineItems.map(item => ({
             ...item,
             hours: Number(item.hours)
         }))

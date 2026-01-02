@@ -67,7 +67,7 @@ export default function InvoiceView() {
         });
         // Prepare Data Context
         const rate = Number(invoice.project.contractingRate) || 0;
-        const totalHours = invoice.invoiceLineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
+        const totalHours = invoice.lineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
         const totalAmount = totalHours * rate;
 
         const context = {
@@ -77,7 +77,7 @@ export default function InvoiceView() {
                 // Optional overrides if they existed in invoice object, otherwise fallbacks used in template
                 totalHours: totalHours,
                 totalAmount: totalAmount,
-                lineItems: invoice.invoiceLineItems.map(item => ({
+                lineItems: invoice.lineItems.map(item => ({
                     description: item.workDesc ? `${item.dateDesc} - ${item.workDesc}` : item.dateDesc,
                     hours: Number(item.hours)
                 }))

@@ -162,11 +162,11 @@ export default function Invoices() {
                                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                                 <ArticleIcon fontSize="small" color="action" sx={{ mr: 1 }} />
                                                 <Typography variant="body2">
-                                                    {invoice.invoiceLineItems.length} items
+                                                    {invoice.lineItems.length} items
                                                 </Typography>
                                             </Box>
                                             <Typography variant="h6" align="right">
-                                                ${invoice.invoiceLineItems.reduce((sum, item) => {
+                                                ${invoice.lineItems.reduce((sum, item) => {
                                                     const rate = Number(invoice.project.contractingRate) || 0;
                                                     const hours = Number(item.hours) || 0;
                                                     return sum + (rate * hours);

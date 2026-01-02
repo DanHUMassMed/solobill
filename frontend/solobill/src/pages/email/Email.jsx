@@ -44,7 +44,8 @@ export default function Email() {
   
   const [downloadConfirmOpen, setDownloadConfirmOpen] = useState(false);
   const [emailPreviewOpen, setEmailPreviewOpen] = useState(false);
-  const [emailBody, setEmailBody] = useState('');
+  const [mailto, setMailto] = useState('');
+  const [emailPreview, setEmailPreview] = useState({});
   const [processing, setProcessing] = useState(false);
 
   // Filter invoices for selected client
@@ -63,6 +64,12 @@ export default function Email() {
   const selectedClient = useMemo(() => {
     return clients.find(c => c.id === selectedClientId);
   }, [clients, selectedClientId]);
+
+  // Check if all selected invoices are downloaded
+  const allSelectedDownloaded = useMemo(() => {
+    if (selectedInvoiceIds.length === 0) return false;
+    return selectedInvoiceIds.every(id => downloadedInvoiceIds.includes(id));
+  }, [selectedInvoiceIds, downloadedInvoiceIds]);
 
   // Handlers
   const handleClientChange = (e) => {
@@ -83,20 +90,12 @@ export default function Email() {
 
   const handleDownloadClick = () => {
     if (selectedInvoiceIds.length === 0) return;
-    performDownload();
+    setDownloadConfirmOpen(true);
   };
 
   const handleEmailClick = async () => {
     if (selectedInvoiceIds.length === 0) return;
-
-    // Check if all selected are downloaded
-    const allDownloaded = selectedInvoiceIds.every(id => downloadedInvoiceIds.includes(id));
-    
-    if (!allDownloaded) {
-      setDownloadConfirmOpen(true);
-    } else {
-      openEmailPreview();
-    }
+    openEmailPreview();
   };
 
   const performDownload = async () => {
@@ -150,12 +149,7 @@ export default function Email() {
 
       // Mark as downloaded
       setDownloadedInvoiceIds(prev => [...new Set([...prev, ...selectedInvoiceIds])]);
-      
-      // If dialog was open (flow from email button), close it and open email preview
-      if (downloadConfirmOpen) {
-        setDownloadConfirmOpen(false);
-        openEmailPreview(); 
-      }
+      setDownloadConfirmOpen(false);
 
     } catch (error) {
       console.error("Download failed", error);
@@ -190,30 +184,9 @@ export default function Email() {
           minimumFractionDigits: 2,
         }).format(value);
       });
-      // Calculate totals for email context
-      let totalAmount = 0;
-      selectedInvoices.forEach(inv => {
-         const rate = Number(inv.project.contractingRate) || 0;
-         const hours = inv.invoiceLineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
-         totalAmount += (rate * hours);
-      });
-
-      const context = {
-        client: {
-            name: selectedClient.name,
-            contactNm: selectedClient.contactNm // Assuming this field exists or similar
-        },
-        invoices: selectedInvoices.map(inv => ({
-            number: inv.invoiceNumber,
-            date: inv.invoiceDate,
-            amount: (Number(inv.project.contractingRate) * inv.invoiceLineItems.reduce((h, i) => h + Number(i.hours), 0)).toFixed(2)
-        })),
-        totalAmount: totalAmount.toFixed(2),
-        consultant: selectedInvoices[0]?.consultant || {} // Use first invoice's consultant snapshot
-      };
-
-      const body = env.renderString(emailTemplate.content, context);
-      setEmailBody(body);
+      const mailto_str = env.renderString(emailTemplate.content, {invoices: selectedInvoices});
+      setMailto(mailto_str);
+      setEmailPreview(parseMailto(mailto_str));
       setEmailPreviewOpen(true);
 
     } catch (error) {
@@ -224,11 +197,27 @@ export default function Email() {
     }
   };
 
+  const parseMailto = (mailto) => {
+    const normalized = typeof mailto === 'string' ? mailto.trim() : '';
+    if (!normalized?.startsWith('mailto:')) return {};
+
+    const [scheme, queryString = ''] = normalized.split('?');
+    const to = decodeURIComponent(scheme.replace('mailto:', ''));
+
+    const params = new URLSearchParams(queryString);
+
+    return {
+      to,
+      subject: decodeURIComponent(params.get('subject') || ''),
+      body: decodeURIComponent(params.get('body') || ''),
+    };
+  };
+
+  
+
+
   const handleSendEmailClient = () => {
-    const subject = `Invoice(s) from ${selectedInvoices[0]?.consultant.name} for ${selectedClient.name}`;
-    const body = encodeURIComponent(emailBody);
-    const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
-    window.location.href = mailto;
+    window.location.href =mailto;
     setEmailPreviewOpen(false);
   };
 
@@ -236,7 +225,7 @@ export default function Email() {
 
   const renderInvoiceHtml = (invoice, templateStr, env) => {
      const rate = Number(invoice.project.contractingRate) || 0;
-     const totalHours = invoice.invoiceLineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
+     const totalHours = invoice.lineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
      const totalAmount = totalHours * rate;
 
      const context = {
@@ -245,7 +234,7 @@ export default function Email() {
             date: invoice.invoiceDate,
             totalHours: totalHours,
             totalAmount: totalAmount,
-            lineItems: invoice.invoiceLineItems.map(item => ({
+            lineItems: invoice.lineItems.map(item => ({
                 description: item.workDesc ? `${item.dateDesc} - ${item.workDesc}` : item.dateDesc,
                 hours: Number(item.hours)
             }))
@@ -334,7 +323,7 @@ export default function Email() {
                     <ListItem><ListItemText primary="No invoices found for this client." /></ListItem>
                 ) : (
                     clientInvoices.map((invoice) => {
-                        const total = (Number(invoice.project.contractingRate) * invoice.invoiceLineItems.reduce((h, i) => h + Number(i.hours), 0)).toFixed(2);
+                        const total = (Number(invoice.project.contractingRate) * invoice.lineItems.reduce((h, i) => h + Number(i.hours), 0)).toFixed(2);
                         const labelId = `checkbox-list-label-${invoice.id}`;
                         const isSelected = selectedInvoiceIds.includes(invoice.id);
 
@@ -380,7 +369,7 @@ export default function Email() {
                 <Button 
                     variant="contained" 
                     startIcon={<EmailIcon />} 
-                    disabled={selectedInvoiceIds.length === 0 || processing}
+                    disabled={selectedInvoiceIds.length === 0 || processing || !allSelectedDownloaded}
                     onClick={handleEmailClick}
                 >
                     SEND E-MAIL ({selectedInvoiceIds.length})
@@ -410,35 +399,59 @@ export default function Email() {
       </Dialog>
 
       {/* Email Preview Dialog */}
-      <Dialog
-        open={emailPreviewOpen}
-        onClose={() => setEmailPreviewOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Email Preview</DialogTitle>
-        <DialogContent>
-          <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f5f5f5', fontFamily: 'monospace', whiteSpace: 'pre-wrap', mb: 2 }}>
-             <Box sx={{ borderBottom: '1px solid #ddd', pb: 1, mb: 1 }}>
-                <Typography variant="body2"><strong>To:</strong> {selectedClient?.billingRepEmail || selectedClient?.email || 'client@example.com'}</Typography>
-                <Typography variant="body2"><strong>Subject:</strong> Invoice(s) from {selectedInvoices[0]?.consultant.name} for {selectedClient?.name}</Typography>
-             </Box>
-             {emailBody}
-          </Paper>
+{/* Email Preview Dialog */}
+<Dialog
+  open={emailPreviewOpen}
+  onClose={() => setEmailPreviewOpen(false)}
+  maxWidth="md"
+  fullWidth
+>
+  <DialogTitle>Email Preview</DialogTitle>
 
-          <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ bgcolor: '#fff4e5', color: '#663c00' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Reminder:</Typography>
-            Please attach the downloaded invoice(s) to your email before sending. 
-            For security reasons, browsers require attachments to be added manually.
-          </Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEmailPreviewOpen(false)}>CANCEL</Button>
-          <Button onClick={handleSendEmailClient} variant="contained" startIcon={<EmailIcon />}>
-            OPEN EMAIL CLIENT
-          </Button>
-        </DialogActions>
-      </Dialog>
+  <DialogContent>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 2,
+        bgcolor: '#f5f5f5',
+        fontFamily: 'monospace',
+        whiteSpace: 'pre-wrap',
+        mb: 2,
+      }}
+    >
+      <Box sx={{ borderBottom: '1px solid #ddd', pb: 1, mb: 1 }}>
+        <Typography variant="body2">
+          <strong>To:</strong> {emailPreview.to || '(none)'}
+        </Typography>
+        <Typography variant="body2">
+          <strong>Subject:</strong> {emailPreview.subject || '(no subject)'}
+        </Typography>
+      </Box>
+
+      {emailPreview.body}
+    </Paper>
+
+    <Alert
+      severity="warning"
+      icon={<WarningAmberIcon />}
+      sx={{ bgcolor: '#fff4e5', color: '#663c00' }}
+    >
+      <Typography variant="subtitle2" fontWeight="bold">
+        Reminder:
+      </Typography>
+      Please attach the downloaded invoice(s) to your email before sending.
+      Browsers cannot add attachments automatically.
+    </Alert>
+  </DialogContent>
+
+  <DialogActions>
+    <Button onClick={() => setEmailPreviewOpen(false)}>CANCEL</Button>
+    <Button variant="contained" startIcon={<EmailIcon />}
+      onClick={handleSendEmailClient}>
+      OPEN EMAIL CLIENT
+    </Button>
+  </DialogActions>
+</Dialog>
 
     </Box>
   );
