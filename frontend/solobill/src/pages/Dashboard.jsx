@@ -43,6 +43,7 @@ import {
 } from '@mui/icons-material';
 
 import { useDashboardMetrics } from '../hooks/useDashboardMetrics';
+import PageHeader from '../components/common/PageHeader';
 
 // --- Colors ---
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
@@ -100,28 +101,27 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" fontWeight="bold">
-          Business Overview
-        </Typography>
-        <Stack direction="row" spacing={2}>
-          <Button 
-            variant="contained" 
-            startIcon={<AddIcon />}
-            onClick={() => navigate('/invoices/create')}
-          >
-            New Invoice
-          </Button>
-          <Button 
-            variant="outlined" 
-            startIcon={<PersonAddIcon />}
-            onClick={() => navigate('/clients')}
-          >
-            Add Client
-          </Button>
-        </Stack>
-      </Box>
+      <PageHeader 
+        title="Business Overview"
+        actions={
+          <>
+            <Button 
+              variant="contained" 
+              startIcon={<AddIcon />}
+              onClick={() => navigate('/invoices/create')}
+            >
+              New Invoice
+            </Button>
+            <Button 
+              variant="outlined" 
+              startIcon={<PersonAddIcon />}
+              onClick={() => navigate('/clients')}
+            >
+              Add Client
+            </Button>
+          </>
+        }
+      />
 
       {/* Stats Grid */}
       <Grid container spacing={3} sx={{ mb: 3 }}>

@@ -1,23 +1,15 @@
 import React, { useState } from 'react';
 import { 
   Box, 
-  Typography, 
   Button, 
   TextField, 
   Paper, 
   InputAdornment, 
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Grid,
-  Card,
-  CardContent,
-  CardActions,
+  Typography,
   Chip
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -27,6 +19,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useProjects } from '../../hooks/useProjects';
 import ProjectDialog from './ProjectDialog';
+import PageHeader from '../../components/common/PageHeader';
+import ResourceCard from '../../components/common/ResourceCard';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 export default function Projects() {
   const { projects, clients, saveProject, deleteProject } = useProjects();
@@ -99,16 +94,18 @@ export default function Projects() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Projects</Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<AddIcon />} 
-          onClick={() => handleOpenDialog()}
-        >
-          Add Project
-        </Button>
-      </Box>
+      <PageHeader 
+        title="Projects" 
+        actions={
+          <Button 
+            variant="contained" 
+            startIcon={<AddIcon />} 
+            onClick={() => handleOpenDialog()}
+          >
+            Add Project
+          </Button>
+        }
+      />
 
       <Paper sx={{ p: 1, mb: 3 }}>
         <TextField
@@ -134,12 +131,10 @@ export default function Projects() {
         </Typography>
       ) : (
         Object.values(groupedProjects).map((group) => (
-          <Accordion key={group.clientName} defaultExpanded>
+          <Accordion key={group.clientName} defaultExpanded sx={{ mb: 2 }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
-              sx={{ bgcolor: '#f5f5f5' }}
+              sx={{ bgcolor: 'action.hover' }}
             >
               <Typography variant="h6">{group.clientName}</Typography>
               <Chip size="small" label={group.projects.length} sx={{ ml: 2 }} />
@@ -148,53 +143,46 @@ export default function Projects() {
               <Grid container spacing={3}>
                 {group.projects.map((project) => (
                   <Grid item xs={12} sm={6} md={4} key={project.id}>
-                    <Card variant="outlined" sx={{ 
-                        height: '100%',
-                        width: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column'
-                    }}>
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                            <Typography variant="h6" component="div">
-                                {project.name}
-                            </Typography>
-                            <Chip 
-                                label={project.poNumber || 'TBD'} 
-                                size="small" 
-                                variant="outlined" 
-                                color={project.poNumber ? 'default' : 'warning'}
-                            />
-                        </Box>
-                        
-                        <Typography variant="subtitle2" color="primary" gutterBottom>
-                          {project.contractingTitle || 'No Title'}
-                        </Typography>
+                    <ResourceCard
+                      title={project.name}
+                      subtitle={project.contractingTitle || 'No Title'}
+                      icon={
+                        <Chip 
+                          label={project.poNumber || 'TBD'} 
+                          size="small" 
+                          variant="outlined" 
+                          color={project.poNumber ? 'default' : 'warning'}
+                        />
+                      }
+                      content={
+                        <>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            Rate: ${project.contractingRate}/hr
+                          </Typography>
 
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                          Rate: ${project.contractingRate}/hr
-                        </Typography>
-
-                        {project.contractingDesc && (
-                            <Typography variant="body2" color="text.secondary" sx={{ 
-                                display: '-webkit-box',
-                                WebkitLineClamp: 3,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden'
-                            }}>
-                                {project.contractingDesc}
-                            </Typography>
-                        )}
-                      </CardContent>
-                      <CardActions disableSpacing sx={{ justifyContent: 'flex-end', borderTop: '1px solid #eee' }}>
-                        <Button size="small" startIcon={<EditIcon />} onClick={() => handleOpenDialog(project)}>
-                          Edit
-                        </Button>
-                        <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => confirmDelete(project.id)}>
-                          Delete
-                        </Button>
-                      </CardActions>
-                    </Card>
+                          {project.contractingDesc && (
+                              <Typography variant="body2" color="text.secondary" sx={{ 
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 3,
+                                  WebkitBoxOrient: 'vertical',
+                                  overflow: 'hidden'
+                              }}>
+                                  {project.contractingDesc}
+                              </Typography>
+                          )}
+                        </>
+                      }
+                      actions={
+                        <>
+                          <Button size="small" startIcon={<EditIcon />} onClick={() => handleOpenDialog(project)}>
+                            Edit
+                          </Button>
+                          <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => confirmDelete(project.id)}>
+                            Delete
+                          </Button>
+                        </>
+                      }
+                    />
                   </Grid>
                 ))}
               </Grid>
@@ -211,23 +199,15 @@ export default function Projects() {
         clients={clients}
       />
 
-      <Dialog
+      <ConfirmDialog
         open={deleteConfirmation.open}
         onClose={() => setDeleteConfirmation({ open: false, id: null })}
-      >
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this project? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={() => setDeleteConfirmation({ open: false, id: null })}>Cancel</Button>
-            <Button onClick={handleDelete} color="error" autoFocus>
-            Delete
-            </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleDelete}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        confirmColor="error"
+      />
     </Box>
   );
 }

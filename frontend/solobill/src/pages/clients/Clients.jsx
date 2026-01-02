@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
 import { 
   Box, 
-  Typography, 
   Button, 
   TextField, 
   Paper, 
   InputAdornment, 
   Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions
+  Typography
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,6 +14,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useClients } from '../../hooks/useClients';
 import ClientDialog from './ClientDialog';
+import PageHeader from '../../components/common/PageHeader';
+import ResourceCard from '../../components/common/ResourceCard';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 export default function Clients() {
   const { clients, saveClient, deleteClient } = useClients();
@@ -67,16 +62,18 @@ export default function Clients() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Clients</Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<AddIcon />} 
-          onClick={() => handleOpenDialog()}
-        >
-          Add Client
-        </Button>
-      </Box>
+      <PageHeader 
+        title="Clients" 
+        actions={
+          <Button 
+            variant="contained" 
+            startIcon={<AddIcon />} 
+            onClick={() => handleOpenDialog()}
+          >
+            Add Client
+          </Button>
+        }
+      />
 
       <Paper sx={{ p: 1, mb: 3 }}>
         <TextField
@@ -99,45 +96,42 @@ export default function Clients() {
       <Grid container spacing={3}>
         {filteredClients.map((client) => (
           <Grid item xs={12} sm={6} md={4} key={client.id}>
-            <Card variant="outlined" sx={{ 
-                height: '100%', 
-                width: '100%',
-                display: 'flex', 
-                flexDirection: 'column'
-            }}>
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" component="div" gutterBottom>
-                  {client.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {client.addressL1}
-                  {client.addressL2 && <><br />{client.addressL2}</>}
-                  {client.addressL3 && <><br />{client.addressL3}</>}
-                </Typography>
-                
-                <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle2">Billing Representative:</Typography>
-                    <Typography variant="body2">
-                        {client.billingRepName || 'N/A'}
-                        {client.billingRepEmail && <><br />{client.billingRepEmail}</>}
-                    </Typography>
-                </Box>
-                 {client.contactNm && (
-                     <Box sx={{ mt: 1 }}>
+            <ResourceCard
+              title={client.name}
+              content={
+                <>
+                  <Typography variant="body2" color="text.secondary">
+                    {client.addressL1}
+                    {client.addressL2 && <><br />{client.addressL2}</>}
+                    {client.addressL3 && <><br />{client.addressL3}</>}
+                  </Typography>
+                  
+                  <Box sx={{ mt: 2 }}>
+                      <Typography variant="subtitle2">Billing Representative:</Typography>
+                      <Typography variant="body2">
+                          {client.billingRepName || 'N/A'}
+                          {client.billingRepEmail && <><br />{client.billingRepEmail}</>}
+                      </Typography>
+                  </Box>
+                  {client.contactNm && (
+                      <Box sx={{ mt: 1 }}>
                         <Typography variant="subtitle2">Contact:</Typography>
-                         <Typography variant="body2">{client.contactNm}</Typography>
-                     </Box>
-                 )}
-              </CardContent>
-              <CardActions disableSpacing sx={{ justifyContent: 'flex-end', borderTop: '1px solid #eee' }}>
-                <Button size="small" startIcon={<EditIcon />} onClick={() => handleOpenDialog(client)}>
-                  Edit
-                </Button>
-                <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => confirmDelete(client.id)}>
-                  Delete
-                </Button>
-              </CardActions>
-            </Card>
+                        <Typography variant="body2">{client.contactNm}</Typography>
+                      </Box>
+                  )}
+                </>
+              }
+              actions={
+                <>
+                  <Button size="small" startIcon={<EditIcon />} onClick={() => handleOpenDialog(client)}>
+                    Edit
+                  </Button>
+                  <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => confirmDelete(client.id)}>
+                    Delete
+                  </Button>
+                </>
+              }
+            />
           </Grid>
         ))}
         
@@ -157,23 +151,15 @@ export default function Clients() {
         client={selectedClient}
       />
 
-      <Dialog
+      <ConfirmDialog
         open={deleteConfirmation.open}
         onClose={() => setDeleteConfirmation({ open: false, id: null })}
-      >
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this client? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={() => setDeleteConfirmation({ open: false, id: null })}>Cancel</Button>
-            <Button onClick={handleDelete} color="error" autoFocus>
-            Delete
-            </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleDelete}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this client? This action cannot be undone."
+        confirmText="Delete"
+        confirmColor="error"
+      />
     </Box>
   );
 }
