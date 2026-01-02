@@ -1,56 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Paper, TextField, Button, Box } from '@mui/material';
-import { consultantRepo } from '../db/repositories/consultantRepository';
 import AdditionalFields from '../components/common/AdditionalFields';
-import { ConsultantValidator } from '../utils/validation';
+import { useConsultant } from '../hooks/useConsultant';
 import { useNotification } from '../context/NotificationContext';
 
+const initialConsultantState = {
+  id: '',
+  name: '',
+  addressL1: '',
+  addressL2: '',
+  addressL3: '',
+  email: '',
+};
+
 export default function ConsultantInfo() {
-  const [formData, setFormData] = useState({
-    name: '',
-    addressL1: '',
-    addressL2: '',
-    addressL3: '',
-    email: '',
-  });
+  const [formData, setFormData] = useState(initialConsultantState);
   const [additionalFields, setAdditionalFields] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+
+  const { consultant, loading, saveConsultant } = useConsultant();
   const { notify } = useNotification();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const consultants = await consultantRepo.getAll();
-        if (consultants && consultants.length > 0) {
-          const consultant = consultants[0];
-          setFormData({
-            name: consultant.name || '',
-            addressL1: consultant.addressL1 || '',
-            addressL2: consultant.addressL2 || '',
-            addressL3: consultant.addressL3 || '',
-            email: consultant.email || '',
-          });
-          
-          if (consultant.additionalFields) {
-            try {
-              setAdditionalFields(JSON.parse(consultant.additionalFields));
-            } catch (e) {
-              console.error("Failed to parse additional fields", e);
-              setAdditionalFields([]);
-            }
-          }
+    if (consultant) {
+      setFormData({
+        id: consultant.id,
+        name: consultant.name || '',
+        addressL1: consultant.addressL1 || '',
+        addressL2: consultant.addressL2 || '',
+        addressL3: consultant.addressL3 || '',
+        email: consultant.email || '',
+      });
+      
+      if (consultant.additionalFields) {
+        try {
+          setAdditionalFields(JSON.parse(consultant.additionalFields));
+        } catch (e) {
+          console.error("Failed to parse additional fields", e);
+          setAdditionalFields([]);
         }
-      } catch (error) {
-        console.error("Failed to load consultant info", error);
-        notify('Failed to load information', 'error');
-      } finally {
-        setLoading(false);
       }
-    };
-
-    loadData();
-  }, [notify]);
+    }
+  }, [consultant]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,26 +53,13 @@ export default function ConsultantInfo() {
   };
 
   const handleSave = async () => {
-    const { isValid, errors: validationErrors } = ConsultantValidator.validate(formData);
+    const result = await saveConsultant(formData, additionalFields);
     
-    if (!isValid) {
-      setErrors(validationErrors);
+    if (!result.success && result.errors) {
+      setErrors(result.errors);
       notify('Please fix the errors before saving', 'warning');
-      return;
-    }
-
-    try {
-      const consultantData = {
-        ...formData,
-        additionalFields: JSON.stringify(additionalFields)
-      };
-      
-      await consultantRepo.put(consultantData);
-      notify('Information saved successfully', 'success');
+    } else if (result.success) {
       setErrors({});
-    } catch (error) {
-      console.error("Failed to save consultant info", error);
-      notify('Failed to save information', 'error');
     }
   };
 

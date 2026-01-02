@@ -30,6 +30,7 @@ export default function ClientDialog({ open, onClose, onSave, client }) {
     if (open) {
       if (client) {
         setFormData(client);
+        
         try {
           setAdditionalFields(client.additionalFields ? JSON.parse(client.additionalFields) : []);
         } catch {

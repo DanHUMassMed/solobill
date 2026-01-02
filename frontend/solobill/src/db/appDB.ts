@@ -16,7 +16,7 @@ export class AppDB extends Dexie {
     super('SoloBillDB');
 
     this.version(1).stores({
-      consultants: 'email',                // email is a natural key
+      consultants: 'id, email', 
       clients: 'id, name',
       projects: 'id, clientId, name',
       invoices: `
