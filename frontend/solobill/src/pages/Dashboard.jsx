@@ -7,17 +7,18 @@ import {
   Button, 
   Card, 
   CardContent, 
-  Stack,
-  IconButton,
+  Avatar,
+  CircularProgress,
+  useTheme,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Avatar,
-  CircularProgress
+  IconButton
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { 
   BarChart, 
   Bar, 
@@ -45,11 +46,6 @@ import {
 import { useDashboardMetrics } from '../hooks/useDashboardMetrics';
 import PageHeader from '../components/common/PageHeader';
 
-// --- Colors ---
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
-const BLUE_COLOR = '#1976d2';
-const GREEN_COLOR = '#2e7d32';
-
 // --- Helper Components ---
 
 const StatCard = ({ title, value, subtitle, icon, color }) => (
@@ -57,7 +53,16 @@ const StatCard = ({ title, value, subtitle, icon, color }) => (
     <CardContent>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
         <Box>
-           <Avatar sx={{ bgcolor: `${color}15`, color: color, width: 48, height: 48, borderRadius: 2 }} variant="rounded">
+           <Avatar 
+             sx={{ 
+               bgcolor: alpha(color, 0.15), 
+               color: color, 
+               width: 48, 
+               height: 48, 
+               borderRadius: 2 
+             }} 
+             variant="rounded"
+           >
               {icon}
            </Avatar>
         </Box>
@@ -79,6 +84,7 @@ const StatCard = ({ title, value, subtitle, icon, color }) => (
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const theme = useTheme();
   const { data, loading, error } = useDashboardMetrics();
 
   if (loading) {
@@ -98,6 +104,21 @@ export default function Dashboard() {
   }
 
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+
+  // Theme Colors
+  const BLUE_COLOR = theme.palette.primary.main;
+  const GREEN_COLOR = theme.palette.success.main;
+  const WARNING_COLOR = theme.palette.warning.main;
+  const INFO_COLOR = theme.palette.info.main;
+  
+  const PIE_COLORS = [
+      theme.palette.primary.main,
+      theme.palette.secondary.main,
+      theme.palette.error.main,
+      theme.palette.warning.main,
+      theme.palette.info.main,
+      theme.palette.success.main
+  ];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -149,7 +170,7 @@ export default function Dashboard() {
             value={data.activeProjects}
             subtitle="Total ongoing engagements"
             icon={<Work />}
-            color="#ed6c02" // Warning/Orange
+            color={WARNING_COLOR}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -158,7 +179,7 @@ export default function Dashboard() {
             value={data.totalClients}
             subtitle="Registered in your network"
             icon={<People />}
-            color="#0288d1" // Info/Light Blue
+            color={INFO_COLOR}
           />
         </Grid>
       </Grid>
@@ -186,6 +207,7 @@ export default function Dashboard() {
                         name === 'revenue' ? formatCurrency(value) : value, 
                         name === 'revenue' ? 'Revenue' : 'Hours'
                     ]}
+                    contentStyle={{ backgroundColor: theme.palette.background.paper }}
                   />
                   <Legend />
                   <Bar yAxisId="right" dataKey="hours" name="Hours" fill={GREEN_COLOR} />
@@ -214,10 +236,10 @@ export default function Dashboard() {
                         dataKey="value"
                       >
                         {data.clientRevenue.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value) => formatCurrency(value)} />
+                      <Tooltip formatter={(value) => formatCurrency(value)} contentStyle={{ backgroundColor: theme.palette.background.paper }} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
@@ -269,7 +291,7 @@ export default function Dashboard() {
                           </Typography>
                       </TableCell>
                       <TableCell align="center">
-                          <IconButton size="small" onClick={() => navigate(`/invoices/${row.id}`)}>
+                          <IconButton size="small" onClick={() => navigate(`/invoices/${row.id}`)} aria-label="view invoice">
                               <Visibility fontSize="small" />
                           </IconButton>
                       </TableCell>

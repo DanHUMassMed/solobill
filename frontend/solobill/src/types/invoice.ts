@@ -15,15 +15,8 @@ export interface Invoice {
   invoiceDate: string; // ISO String
   totalHours: string | number;
   totalAmount: string | number;
-  // Snapshots - Consultant
   consultant: Consultant;
-
-  // Snapshots - Client
   client: Client;
-  
-  // Snapshots - Project
   project: Project;
-  
-  // Invoice Details
   lineItems: InvoiceLineItem[];
 }

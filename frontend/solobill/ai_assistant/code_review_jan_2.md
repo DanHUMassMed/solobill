@@ -64,9 +64,7 @@ This review identifies opportunities to apply **SOLID principles**—specificall
     *   Apply to `Clients` and `Projects` pages.
 
 ### Phase 3: Repository Safety (Low Priority)
-5.  **Repository Cleanup**:
-    *   Update `InvoiceRepository.ts` to disable/redirect inherited `add/put` methods.
-    *   Review `BaseRepository.ts` for any other shared utility needs.
+
 
 ## Visual Consistency & PWA
 *   **Theme**: Ensure all hardcoded colors (e.g., `#f5f5f5`, error reds) are replaced with `theme.palette.*` references to support future Dark Mode or theming changes.

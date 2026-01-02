@@ -9,7 +9,7 @@ import {
   Divider
 } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
-import SettingsIcon from '@mui/icons-material/Settings';
+import StorageIcon from '@mui/icons-material/Storage';
 import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
@@ -21,6 +21,12 @@ const Admin = () => {
       description: 'Manage HTML templates for invoices and emails.',
       icon: <DescriptionIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
       path: '/admin/templates'
+    },
+    {
+      title: 'Data Management',
+      description: 'Export invoices to CSV and archive old records.',
+      icon: <StorageIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
+      path: '/admin/data'
     }
   ];
 

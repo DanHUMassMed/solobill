@@ -47,7 +47,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
       }),
       marginLeft: 0,
     }),
-    backgroundColor: '#f5f5f5', 
+    backgroundColor: theme.palette.grey[100], 
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
