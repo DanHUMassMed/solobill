@@ -38,18 +38,20 @@ env.addFilter('currency', (value) => {
 // const output = env.render('invoice_template.html', {invoice: mockInvoice});
 //console.log(output);
 
-const mailtoLink = env.render('email_template.html', {invoices: mockInvoices});
+// const mailtoLink = env.render('email_template.html', {invoices: mockInvoices});
 
-// Wrap the mailtoLink in a minimal HTML page
-const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Email Preview</title>
-</head>
-<body>
-  <a href="${mailtoLink}">Send Email</a>
-</body>
-</html>`;
+// // Wrap the mailtoLink in a minimal HTML page
+// const html = `<!DOCTYPE html>
+// <html lang="en">
+// <head>
+//   <meta charset="UTF-8">
+//   <title>Email Preview</title>
+// </head>
+// <body>
+//   <a href="${mailtoLink}">Send Email</a>
+// </body>
+// </html>`;
+// console.log(html);
 
-console.log(html);
+const output = env.render('tocsv_template.html', {invoices: mockInvoices});
+console.log(output);
