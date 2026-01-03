@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Paper, TextField, Button, Box } from '@mui/material';
+import { Typography, Grid, Paper, TextField, Button, Box, Divider } from '@mui/material';
 import AdditionalFields from '../components/common/AdditionalFields';
 import { useConsultant } from '../hooks/useConsultant';
 import { useNotification } from '../context/NotificationContext';
-
+import PageHeader from '../components/common/PageHeader';
 const initialConsultantState = {
   id: '',
   name: '',
@@ -68,13 +68,18 @@ export default function ConsultantInfo() {
   }
 
   return (
-    <Paper sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
-      <Typography variant="h5" gutterBottom>Consultant Information</Typography>
-      <Typography variant="body2" color="textSecondary" paragraph>
-        This information will be displayed on your invoices.
-      </Typography>
+    <Box sx={{ flexGrow: 1 }}>
+            <PageHeader 
+              title="Consultant"
+              
+            />
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary">
+          This information will be displayed on your invoices.
+        </Typography>
+      </Box>
       
-      <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Paper component="form" noValidate autoComplete="off" sx={{ display: 'flex', p: 3, flexDirection: 'column', gap: 2 }}>
         <TextField 
             label="Full Name" 
             name="name"
@@ -85,9 +90,19 @@ export default function ConsultantInfo() {
             placeholder="e.g. Alex Quantum"
             error={!!errors.name}
             helperText={errors.name}
+            sx={{ mb: 2 }}
         />
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Address
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+
+              </Grid>
+
         <TextField 
-            label="Address Line 1" 
+            label="Line 1" 
             name="addressL1"
             value={formData.addressL1}
             onChange={handleChange}
@@ -98,7 +113,7 @@ export default function ConsultantInfo() {
             helperText={errors.addressL1}
         />
         <TextField 
-            label="Address Line 2" 
+            label="Line 2" 
             name="addressL2"
             value={formData.addressL2}
             onChange={handleChange}
@@ -106,12 +121,16 @@ export default function ConsultantInfo() {
             placeholder="e.g. Futurama City, CA 90210"
         />
         <TextField 
-            label="Address Line 3 (Optional)" 
+            label="Line 3 (Optional)" 
             name="addressL3"
             value={formData.addressL3}
             onChange={handleChange}
             fullWidth 
         />
+        </Grid>
+        </Box>
+
+         <Divider sx={{ my: 2 }} />
         <TextField 
             label="Email Address" 
             name="email"
@@ -132,13 +151,13 @@ export default function ConsultantInfo() {
         <Button 
             variant="contained" 
             color="primary" 
-            size="large"
+
             onClick={handleSave}
             sx={{ mt: 2 }}
         >
             SAVE INFORMATION
         </Button>
-      </Box>
-    </Paper>
+      </Paper>
+    </Box>
   );
 }

@@ -24,6 +24,7 @@ import {
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import PageHeader from '../../components/common/PageHeader';
 
 import { useClients } from '../../hooks/useClients';
 import { useInvoices } from '../../hooks/useInvoices';
@@ -289,7 +290,9 @@ export default function Email() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>E-Mail Invoices</Typography>
+      <PageHeader 
+        title="E-Mail Invoices"
+      />
 
       {/* Client Selection */}
       <Paper sx={{ p: 3, mb: 3 }}>

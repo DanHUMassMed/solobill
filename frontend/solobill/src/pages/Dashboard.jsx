@@ -261,7 +261,7 @@ export default function Dashboard() {
           <Table sx={{ minWidth: 650 }} aria-label="recent invoices table">
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
+
                 <TableCell>Client / Invoice #</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell align="right">Amount</TableCell>
@@ -275,11 +275,7 @@ export default function Dashboard() {
                       key={row.id}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                      <TableCell padding="checkbox">
-                         <Avatar variant="rounded" sx={{ bgcolor: 'primary.light', width: 32, height: 32 }}>
-                            <Box sx={{ fontSize: '0.8rem' }}>INV</Box>
-                         </Avatar>
-                      </TableCell>
+
                       <TableCell component="th" scope="row">
                         <Typography variant="subtitle2">{row.client?.name}</Typography>
                         <Typography variant="caption" color="text.secondary">#{row.invoiceNumber}</Typography>

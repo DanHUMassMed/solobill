@@ -31,6 +31,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useNavigate } from 'react-router-dom';
 import { useInvoices } from '../../hooks/useInvoices';
+import PageHeader from '../../components/common/PageHeader';
 
 export default function Invoices() {
   const { invoices, projects, clients, deleteInvoice, snackbar, closeSnackbar } = useInvoices();
@@ -95,8 +96,11 @@ export default function Invoices() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Invoices</Typography>
+
+      <PageHeader 
+        title="Invoices"
+        actions={
+          <>
         <Button 
           variant="contained" 
           startIcon={<AddIcon />} 
@@ -104,7 +108,9 @@ export default function Invoices() {
         >
           Create Invoice
         </Button>
-      </Box>
+          </>
+        }
+      />
 
       <Paper sx={{ p: 1, mb: 3 }}>
         <TextField
