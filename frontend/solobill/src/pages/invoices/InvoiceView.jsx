@@ -12,7 +12,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoices } from '../../hooks/useInvoices';
 import { templateRepo } from '../../db/repositories/templateRepository';
-import nunjucks from 'nunjucks';
+import { nunjucksEnv } from '../../utils/templateUtils';
 import html2pdf from 'html2pdf.js';
 
 export default function InvoiceView() {
@@ -46,70 +46,14 @@ export default function InvoiceView() {
 
   useEffect(() => {
     if (invoice && templateHtml) {
-      try {
-        const env = new nunjucks.Environment();
-        env.addFilter('formatDate', (str) => {
-            if (!str) return '';
-            return new Date(str).toLocaleDateString();
-        });
-        env.addFilter('fixed', (num) => {
-            const n = Number(num);
-            return isNaN(n) ? '0.00' : n.toFixed(2);
-        });
-        env.addFilter('currency', (value) => {
-          if (value == null || isNaN(value)) return '$0.00';
+        try {
+          const env = nunjucksEnv();
+          const html = env.renderString(templateHtml, {invoice: invoice});
+          setRenderedHtml(html);
+        } catch (error) {
+          console.error("Template rendering error", e);
+        }
 
-          return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-          }).format(value);
-        });
-        // Prepare Data Context
-        const rate = Number(invoice.project.contractingRate) || 0;
-        const totalHours = invoice.lineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
-        const totalAmount = totalHours * rate;
-
-        const context = {
-            invoice: {
-                invoiceNumber: invoice.invoiceNumber,
-                date: invoice.invoiceDate,
-                // Optional overrides if they existed in invoice object, otherwise fallbacks used in template
-                totalHours: totalHours,
-                totalAmount: totalAmount,
-                lineItems: invoice.lineItems.map(item => ({
-                    description: item.workDesc ? `${item.dateDesc} - ${item.workDesc}` : item.dateDesc,
-                    hours: Number(item.hours)
-                }))
-            },
-            consultant: {
-                name: invoice.consultant.name,
-                address_l1: invoice.consultant.addressL1,
-                address_l2: invoice.consultant.addressL2,
-                address_l3: invoice.consultant.addressL3,
-                email: invoice.consultant.email
-            },
-            client: {
-                client_name: invoice.client.name,
-                client_address_l1: invoice.client.addressL1,
-                client_address_l2: invoice.client.addressL2,
-                client_address_l3: invoice.client.addressL3
-            },
-            project: {
-                project_name: invoice.project.name,
-                po_number: invoice.project.poNumber,
-                consulting_title: invoice.project.contractingTitle,
-                bill_description: invoice.project.contractingDesc,
-                consulting_rate: rate
-            }
-        };
-
-        const html = env.renderString(templateHtml, context);
-        setRenderedHtml(html);
-
-      } catch (e) {
-        console.error("Template rendering error", e);
-      }
     }
   }, [invoice, templateHtml]);
 
