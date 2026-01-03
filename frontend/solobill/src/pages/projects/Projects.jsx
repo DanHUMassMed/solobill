@@ -142,7 +142,7 @@ export default function Projects() {
             <AccordionDetails sx={{ p: 2 }}>
               <Grid container spacing={3}>
                 {group.projects.map((project) => (
-                  <Grid xs={12} sm={6} md={4} key={project.id}>
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.id}>
                     <ResourceCard
                       title={project.name}
                       subtitle={project.contractingTitle || 'No Title'}

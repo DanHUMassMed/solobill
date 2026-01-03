@@ -43,7 +43,7 @@ const Admin = () => {
 
       <Grid container spacing={3}>
         {adminFeatures.map((feature) => (
-          <Grid xs={12} sm={6} md={4} key={feature.title}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={feature.title}>
             <Card>
               <CardActionArea onClick={() => navigate(feature.path)} sx={{ height: '100%' }}>
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', py: 4 }}>

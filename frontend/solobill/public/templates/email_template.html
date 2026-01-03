@@ -1,9 +1,8 @@
-{% set first = invoices[0] %}
-{% set client = first.client %}
-{% set consultant = first.consultant %}
-{% set subject %}Please find Invoices for {{ consultant.name }}{% endset %}
-
-{% set body %}Hello {{ client.billingRepName | default('Billing Team') }},
+{% set first = invoices[0] -%}
+{% set client = first.client -%}
+{% set consultant = first.consultant -%}
+{% set subject -%}Please find Invoices for {{ consultant.name }}{% endset -%}
+{% set body -%}Hello {{ client.billingRepName | default('Billing Team') }},
 
 Please find the following invoice{% if invoices | length > 1 %}s{% endif %} attached for services rendered {% if client.name %}to {{ client.name }}{% endif %}:
 
@@ -16,8 +15,5 @@ Please find the following invoice{% if invoices | length > 1 %}s{% endif %} atta
 Best regards,
 {{ consultant.name }}
 {{ consultant.email }}
-{% endset %}
-
-mailto:{{ client.billingRepEmail | urlencode }}
-?subject={{ subject | urlencode }}
-&body={{ body | urlencode }}
+{% endset -%}
+mailto:{{ client.billingRepEmail | urlencode }}?subject={{ subject | urlencode }}&body={{ body | urlencode }}

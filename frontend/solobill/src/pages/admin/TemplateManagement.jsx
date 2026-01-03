@@ -37,28 +37,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { templateRepo } from '../../db/repositories/templateRepository';
 import { ValidationRules } from '../../utils/validation';
-import nunjucks from 'nunjucks';
-import { mockInvoice } from '../../utils/mockData';
+import { mockInvoice, mockInvoices } from '../../utils/mockData';
+import { nunjucksEnv, mailToHTML } from '../../utils/templateUtils';
 
-// Configure Nunjucks
-const env = new nunjucks.Environment();
-env.addFilter('formatDate', (str) => {
-  if (!str) return '';
-  return new Date(str).toLocaleDateString();
-});
-env.addFilter('fixed', (num) => {
-  if (num === undefined || num === null) return '0.00';
-  return parseFloat(num).toFixed(2);
-});
-env.addFilter('currency', (value) => {
-  if (value == null || isNaN(value)) return '$0.00';
-
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format(value);
-});
 
 const TemplateManagement = () => {
   const navigate = useNavigate();
@@ -202,7 +183,14 @@ const TemplateManagement = () => {
   const renderPreviewContent = () => {
     if (!currentTemplate) return null;
     try {
-      const rendered = env.renderString(currentTemplate.content, mockInvoice);
+      const env = nunjucksEnv();
+      let rendered = ''
+      if(currentTemplate.type === 'invoice'){ 
+        rendered = env.renderString(currentTemplate.content, {invoice: mockInvoice});
+      } else if (currentTemplate.type === 'email') {
+        rendered = env.renderString(currentTemplate.content, {invoices: mockInvoices});
+        rendered = mailToHTML(rendered)
+      }
       return <div dangerouslySetInnerHTML={{ __html: rendered }} />;
     } catch (error) {
       return <Alert severity="error">Error rendering template: {error.message}</Alert>;
@@ -228,7 +216,7 @@ const TemplateManagement = () => {
           Select the templates currently used for generation.
         </Typography>
         <Grid container spacing={3}>
-          <Grid xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormControl fullWidth>
               <InputLabel>Active Invoice Template</InputLabel>
               <Select
@@ -242,7 +230,7 @@ const TemplateManagement = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormControl fullWidth>
               <InputLabel>Active Email Template</InputLabel>
               <Select

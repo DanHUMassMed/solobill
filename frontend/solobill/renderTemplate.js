@@ -35,14 +35,10 @@ env.addFilter('currency', (value) => {
   }).format(value);
 });
 
-// const output = env.render('invoice_template.html', {
-//   invoice: mockInvoice
-// });
+// const output = env.render('invoice_template.html', {invoice: mockInvoice});
 //console.log(output);
 
-const mailtoLink = env.render('email_template.html', {
-  invoices: mockInvoices
-});
+const mailtoLink = env.render('email_template.html', {invoices: mockInvoices});
 
 // Wrap the mailtoLink in a minimal HTML page
 const html = `<!DOCTYPE html>

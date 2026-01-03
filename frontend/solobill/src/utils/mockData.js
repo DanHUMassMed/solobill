@@ -2,7 +2,7 @@
 
 export const mockConsultant = {
   name: 'Daniel Smith',
-  email: 'dan@example.com',
+  email: 'dan.smith@example.com',
   addressL1: '18 Forest St',
   addressL2: 'Worcester, MA 01605',
   addressL3: '',

@@ -25,4 +25,5 @@ dev-dist
 *.sw?
 
 **/.DS_Store
+test.html
 

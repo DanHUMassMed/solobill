@@ -95,7 +95,7 @@ export default function Clients() {
 
       <Grid container spacing={3}>
         {filteredClients.map((client) => (
-          <Grid xs={12} sm={6} md={4} key={client.id}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={client.id}>
             <ResourceCard
               title={client.name}
               content={
@@ -136,7 +136,7 @@ export default function Clients() {
         ))}
         
         {filteredClients.length === 0 && (
-            <Grid xs={12}>
+            <Grid size={{ xs: 12 }}>
                 <Typography variant="body1" color="textSecondary" align="center" sx={{ mt: 4 }}>
                     No clients found. Add a new client to get started.
                 </Typography>
