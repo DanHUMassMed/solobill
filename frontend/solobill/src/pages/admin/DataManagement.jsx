@@ -8,7 +8,16 @@ import {
   Switch, 
   FormControlLabel, 
   Stack, 
-  Divider 
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Alert,
+  AlertTitle,
+  LinearProgress
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import HistoryIcon from '@mui/icons-material/History';
@@ -17,10 +26,12 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import RestoreIcon from '@mui/icons-material/Restore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import WarningIcon from '@mui/icons-material/Warning';
+import SdStorageIcon from '@mui/icons-material/SdStorage';
 import PageHeader from '../../components/common/PageHeader';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { invoiceRepo } from '../../db/repositories/invoiceRepository';
 import { db } from '../../db/appDB';
+import { calculateStorageUsage } from '../../utils/storageUtils';
 import { useNotification } from '../../context/NotificationContext';
 
 export default function DataManagement() {
@@ -31,9 +42,24 @@ export default function DataManagement() {
   const [restoreFile, setRestoreFile] = useState(null);
   const [confirmRestoreOpen, setConfirmRestoreOpen] = useState(false);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const [storageData, setStorageData] = useState(null);
+  const [calculatingStorage, setCalculatingStorage] = useState(false);
   
   const fileInputRef = useRef(null);
   const { notify } = useNotification();
+
+  const handleCheckStorage = async () => {
+    setCalculatingStorage(true);
+    try {
+      const data = await calculateStorageUsage(db);
+      setStorageData(data);
+    } catch (error) {
+      console.error("Storage check failed", error);
+      notify('Failed to calculate storage usage', 'error');
+    } finally {
+      setCalculatingStorage(false);
+    }
+  };
 
   const handleExport = async () => {
     if (!startDate || !endDate) {
@@ -345,6 +371,101 @@ export default function DataManagement() {
                 RESTORE FROM BACKUP
             </Button>
         </Stack>
+      </Paper>
+
+      {/* Storage Usage Section */}
+      <Paper sx={{ p: 3, maxWidth: 800, mb: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <SdStorageIcon color="primary" />
+            <Typography variant="h6">Storage Usage</Typography>
+        </Box>
+        <Typography variant="body2" color="text.secondary" paragraph>
+            Check how much local storage your data is consuming and monitor available quota.
+        </Typography>
+
+        <Divider sx={{ my: 3 }} />
+
+        {!storageData ? (
+          <Button
+            variant="outlined"
+            onClick={handleCheckStorage}
+            disabled={calculatingStorage}
+          >
+            {calculatingStorage ? 'Calculating...' : 'Calculate Storage Usage'}
+          </Button>
+        ) : (
+          <Box>
+            {/* Summary */}
+            <Box sx={{ mb: 3 }}>
+               {storageData.total ? (
+                 <>
+                   <Typography variant="subtitle1" gutterBottom>
+                     Total Usage: <strong>{storageData.total.usageFormatted}</strong> of {storageData.total.quotaFormatted}
+                   </Typography>
+                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                     <Box sx={{ width: '100%', mr: 1 }}>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={storageData.total.percentUsed} 
+                          color={storageData.total.percentUsed >= 70 ? "warning" : "primary"}
+                        />
+                     </Box>
+                     <Box sx={{ minWidth: 35 }}>
+                        <Typography variant="body2" color="text.secondary">{`${storageData.total.percentUsed}%`}</Typography>
+                     </Box>
+                   </Box>
+                   
+                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, fontStyle: 'italic' }}>
+                     * Total Storage usage varies by browser. Reported totals include browser-managed overhead and may differ between Chrome and Safari. The detailed breakdown reflects your actual SoloBill data.
+                   </Typography>
+                   
+                   {storageData.total.percentUsed >= 70 && (
+                     <Alert severity="warning" sx={{ mt: 2 }}>
+                       <AlertTitle>Storage Warning</AlertTitle>
+                       You are using a significant amount of your available storage. Consider exporting and clearing old data.
+                     </Alert>
+                   )}
+                 </>
+               ) : (
+                 <Alert severity="info">
+                   Storage estimation is not available in this browser.
+                 </Alert>
+               )}
+            </Box>
+
+            {/* Breakdown Table */}
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Detailed Breakdown</Typography>
+            <TableContainer variant="outlined">
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Entity</TableCell>
+                    <TableCell align="right">Estimated Size</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.entries(storageData.entities).map(([name, stats]) => (
+                    <TableRow key={name}>
+                      <TableCell component="th" scope="row" sx={{ textTransform: 'capitalize' }}>
+                        {name}
+                      </TableCell>
+                      <TableCell align="right">{stats.formatted}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <Button
+              variant="text"
+              onClick={handleCheckStorage}
+              disabled={calculatingStorage}
+              sx={{ mt: 2 }}
+            >
+              Recalculate
+            </Button>
+          </Box>
+        )}
       </Paper>
 
       {/* Danger Zone */}
