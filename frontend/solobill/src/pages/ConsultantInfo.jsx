@@ -7,6 +7,7 @@ import PageHeader from '../components/common/PageHeader';
 const initialConsultantState = {
   id: '',
   name: '',
+  companyName: '',
   addressL1: '',
   addressL2: '',
   addressL3: '',
@@ -26,6 +27,7 @@ export default function ConsultantInfo() {
       setFormData({
         id: consultant.id,
         name: consultant.name || '',
+        companyName: consultant.companyName || '',
         addressL1: consultant.addressL1 || '',
         addressL2: consultant.addressL2 || '',
         addressL3: consultant.addressL3 || '',
@@ -90,6 +92,15 @@ export default function ConsultantInfo() {
             placeholder="e.g. Alex Quantum"
             error={!!errors.name}
             helperText={errors.name}
+            sx={{ mb: 2 }}
+        />
+        <TextField 
+            label="Company Name" 
+            name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
+            fullWidth 
+            placeholder="e.g. Quantum Computing"
             sx={{ mb: 2 }}
         />
           <Box sx={{ mb: 2 }}>

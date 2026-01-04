@@ -74,20 +74,6 @@ export const useInvoices = () => {
     }
   };
 
-  const generateInvoiceNumber = () => {
-    const date = new Date()
-      .toISOString()
-      .slice(2, 10)
-      .replace(/-/g, "");
-
-    const suffix = Math.random()
-      .toString(36)
-      .substring(2, 6)
-      .toUpperCase();
-
-    return `INV-${date}-${suffix}`;
-  };
-
   return {
     invoices,
     projects,
@@ -98,7 +84,6 @@ export const useInvoices = () => {
     closeSnackbar,
     createInvoice,
     deleteInvoice,
-    refreshInvoices: loadData,
-    generateInvoiceNumber
+    refreshInvoices: loadData
   };
 };

@@ -21,6 +21,11 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useInvoices } from '../../hooks/useInvoices';
+import { DateField } from '@mui/x-date-pickers/DateField';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { generateInvoiceNumber } from '../../utils/domainUtils';
 
 export default function InvoiceCreate() {
   const { 
@@ -28,15 +33,14 @@ export default function InvoiceCreate() {
     clients, 
     consultant, 
     createInvoice, 
-    generateInvoiceNumber,
     snackbar,
     closeSnackbar
   } = useInvoices();
   
   const navigate = useNavigate();
 
+  const [invoiceDate, setInvoiceDate] = useState(dayjs());
   const [selectedProjectId, setSelectedProjectId] = useState('');
-  const [invoiceNumber] = useState(generateInvoiceNumber());
   const [validationErrors, setValidationErrors] = useState({});
   const [lineItems, setLineItems] = useState([
     { id: crypto.randomUUID(), dateDesc: '', workDesc: '', hours: '' }
@@ -119,8 +123,8 @@ export default function InvoiceCreate() {
 
     const invoiceData = {
         id: crypto.randomUUID(),
-        invoiceNumber,
-        invoiceDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+        invoiceNumber: generateInvoiceNumber(invoiceDate.format('YYYY-MM-DD')),
+        invoiceDate: invoiceDate.format('YYYY-MM-DD'),
         totalHours,
         totalAmount,
         consultant: consultant, // Snapshot
@@ -173,6 +177,7 @@ export default function InvoiceCreate() {
             </TextField>
 
             {selectedProject && selectedClient && (
+              <Box>
                 <Box sx={{ mt: 3, p: 2, bgcolor: '#f9f9f9', borderRadius: 1 }}>
                     <Typography variant="h6" gutterBottom>Project Details</Typography>
                     <Grid container spacing={2}>
@@ -194,9 +199,25 @@ export default function InvoiceCreate() {
                         </Grid>
                     </Grid>
                 </Box>
+                <Box sx={{ mt: 3, p: 2, bgcolor: '#f9f9f9', borderRadius: 1 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateField 
+                    label="Invoice Date" 
+                    defaultValue={dayjs()} 
+                    onChange={(newValue) => {
+                      setInvoiceDate(newValue);
+                    }}
+                    fullWidth
+                  />
+                </LocalizationProvider>
+
+                </Box>
+              </Box>
             )}
         </CardContent>
       </Card>
+
+
 
       {/* Work Log */}
       <Card variant="outlined" sx={{ mb: 3 }}>
