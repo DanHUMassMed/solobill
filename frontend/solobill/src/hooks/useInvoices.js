@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { invoiceRepo } from '../db/repositories/invoiceRepository';
-import { projectRepo } from '../db/repositories/projectRepository';
-import { clientRepo } from '../db/repositories/clientRepository';
 import { consultantRepo } from '../db/repositories/consultantRepository';
 
 export const useInvoices = () => {
@@ -17,8 +15,8 @@ export const useInvoices = () => {
       setLoading(true);
       const [allInvoices, allProjects, allClients, allConsultants] = await Promise.all([
         invoiceRepo.getAll(),
-        projectRepo.getAll(),
-        clientRepo.getAll(),
+        invoiceRepo.getUniqueProjects(),
+        invoiceRepo.getUniqueClients(),
         consultantRepo.getAll()
       ]);
       

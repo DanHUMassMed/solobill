@@ -1,6 +1,8 @@
 // src/db/repositories/InvoiceRepository.ts
 import { BaseRepository } from './baseRepository';
 import { Invoice } from '../../types/invoice';
+import { Client } from '../../types/client';
+import { Project } from '../../types/project';
 import { db } from '../appDB';
 
 export class InvoiceRepository extends BaseRepository<Invoice, string> {
@@ -34,6 +36,36 @@ export class InvoiceRepository extends BaseRepository<Invoice, string> {
             .where('invoiceNumber')
             .equals(invoiceNumber)
             .first();
+    }
+
+    getUniqueClients() {
+        return this.table.toArray().then((invoices) => {
+            const clientMap = new Map<string, Client>();
+
+            for (const invoice of invoices) {
+                const client = invoice.client;
+                if (!clientMap.has(client.id)) {
+                    clientMap.set(client.id, client);
+                }
+            }
+
+            return Array.from(clientMap.values());
+        });
+    }
+
+    getUniqueProjects() {
+        return this.table.toArray().then((invoices) => {
+            const projectMap = new Map<string, Project>();
+
+            for (const invoice of invoices) {
+                const project = invoice.project;
+                if (!projectMap.has(project.id)) {
+                    projectMap.set(project.id, project);
+                }
+            }
+
+            return Array.from(projectMap.values());
+        });
     }
 
     /**

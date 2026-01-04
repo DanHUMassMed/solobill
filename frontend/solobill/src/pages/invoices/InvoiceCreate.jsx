@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
   Box, 
   Typography, 
@@ -12,6 +12,7 @@ import {
   MenuItem,
   Divider,
   Snackbar,
+  CircularProgress,
   Alert
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,6 +22,12 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useInvoices } from '../../hooks/useInvoices';
+
+import { clientRepo } from '../../db/repositories/clientRepository';
+import { projectRepo } from '../../db/repositories/projectRepository';
+import { consultantRepo } from '../../db/repositories/consultantRepository';
+
+
 import { DateField } from '@mui/x-date-pickers/DateField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -29,15 +36,17 @@ import { generateInvoiceNumber } from '../../utils/domainUtils';
 
 export default function InvoiceCreate() {
   const { 
-    projects, 
-    clients, 
-    consultant, 
     createInvoice, 
     snackbar,
     closeSnackbar
   } = useInvoices();
   
   const navigate = useNavigate();
+
+  const [projects, setProjects] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [consultant, setConsultant] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [invoiceDate, setInvoiceDate] = useState(dayjs());
   const [selectedProjectId, setSelectedProjectId] = useState('');
@@ -46,6 +55,29 @@ export default function InvoiceCreate() {
     { id: crypto.randomUUID(), dateDesc: '', workDesc: '', hours: '' }
   ]);
 
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [allConsultants, allClients, allProjects] = await Promise.all([
+        consultantRepo.getAll(),
+        clientRepo.getAll(),
+        projectRepo.getAll()
+      ]);
+      
+      setProjects(allProjects);
+      setClients(allClients);
+      setConsultant(allConsultants.length > 0 ? allConsultants[0] : null);
+
+    } catch (error) {
+      console.error("Failed to load data", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const selectedProject = useMemo(() => {
     return projects.find(p => p.id === selectedProjectId);
@@ -145,6 +177,10 @@ export default function InvoiceCreate() {
         }
     }
   };
+
+    if (loading) {
+      return <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>;
+    }
 
   return (
     <Box sx={{ p: 2, maxWidth: 1000, mx: 'auto' }}>
