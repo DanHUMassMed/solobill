@@ -50,7 +50,6 @@ export default function Invoices() {
 
     // 2. Build Hierarchy
     // We want to display Clients -> Projects -> Invoices
-    // We also want to capture invoices whose client/project might have been deleted (optional, but good practice)
     // For this strict requirement "Client Accordion contains Projects Accordion", we'll iterate active clients.
 
     const grouped = [];

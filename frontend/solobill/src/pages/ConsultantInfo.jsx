@@ -103,42 +103,48 @@ export default function ConsultantInfo() {
             placeholder="e.g. Quantum Computing"
             sx={{ mb: 2 }}
         />
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              Address
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
 
-              </Grid>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle1" sx={{ mb: 1 }}>
+            Address
+          </Typography>
 
-        <TextField 
-            label="Line 1" 
-            name="addressL1"
-            value={formData.addressL1}
-            onChange={handleChange}
-            required 
-            fullWidth 
-            placeholder="e.g. 42 Innovation Drive"
-            error={!!errors.addressL1}
-            helperText={errors.addressL1}
-        />
-        <TextField 
-            label="Line 2" 
-            name="addressL2"
-            value={formData.addressL2}
-            onChange={handleChange}
-            fullWidth 
-            placeholder="e.g. Futurama City, CA 90210"
-        />
-        <TextField 
-            label="Line 3 (Optional)" 
-            name="addressL3"
-            value={formData.addressL3}
-            onChange={handleChange}
-            fullWidth 
-        />
-        </Grid>
+          <Grid container spacing={3}>
+            <Grid size={12}>
+              <TextField
+                label="Line 1"
+                name="addressL1"
+                value={formData.addressL1}
+                onChange={handleChange}
+                required
+                fullWidth
+                placeholder="e.g. 42 Innovation Drive"
+                error={!!errors.addressL1}
+                helperText={errors.addressL1}
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <TextField
+                label="Line 2"
+                name="addressL2"
+                value={formData.addressL2}
+                onChange={handleChange}
+                fullWidth
+                placeholder="e.g. Futurama City, CA 90210"
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <TextField
+                label="Line 3 (Optional)"
+                name="addressL3"
+                value={formData.addressL3}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
         </Box>
 
          <Divider sx={{ my: 2 }} />

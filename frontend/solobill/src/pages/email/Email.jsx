@@ -18,13 +18,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Alert,
   CircularProgress
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import PageHeader from '../../components/common/PageHeader';
+import EmailPreviewDialog from './EmailPreviewDialog';
 
 import { useClients } from '../../hooks/useClients';
 import { useInvoices } from '../../hooks/useInvoices';
@@ -192,53 +191,56 @@ export default function Email() {
 
       {/* Invoices List */}
       {selectedClientId && (
-          <Paper sx={{ mb: 3 }}>
+          <Paper sx={{ mb: 3, display: 'flex', flexDirection: 'column', maxHeight: '60vh' }}>
             <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
                 <Typography variant="h6">Invoices for {selectedClient?.name}</Typography>
                 <Typography variant="body2" color="textSecondary">
                     Select invoices to "attach" to the email or download.
                 </Typography>
             </Box>
-            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {clientInvoices.length === 0 ? (
-                    <ListItem><ListItemText primary="No invoices found for this client." /></ListItem>
-                ) : (
-                    clientInvoices.map((invoice) => {
-                        const total = (Number(invoice.project.contractingRate) * invoice.lineItems.reduce((h, i) => h + Number(i.hours), 0)).toFixed(2);
-                        const labelId = `checkbox-list-label-${invoice.id}`;
-                        const isSelected = selectedInvoiceIds.includes(invoice.id);
+            
+            <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                    {clientInvoices.length === 0 ? (
+                        <ListItem><ListItemText primary="No invoices found for this client." /></ListItem>
+                    ) : (
+                        clientInvoices.map((invoice) => {
+                            const total = (Number(invoice.project.contractingRate) * invoice.lineItems.reduce((h, i) => h + Number(i.hours), 0)).toFixed(2);
+                            const labelId = `checkbox-list-label-${invoice.id}`;
+                            const isSelected = selectedInvoiceIds.includes(invoice.id);
 
-                        return (
-                            <React.Fragment key={invoice.id}>
-                                <ListItemButton
-                                    role={undefined}
-                                    dense
-                                    onClick={() => handleToggleInvoice(invoice.id)}
-                                >
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            edge="start"
-                                            checked={isSelected}
-                                            tabIndex={-1}
-                                            disableRipple
-                                            inputProps={{ 'aria-labelledby': labelId }}
+                            return (
+                                <React.Fragment key={invoice.id}>
+                                    <ListItemButton
+                                        role={undefined}
+                                        dense
+                                        onClick={() => handleToggleInvoice(invoice.id)}
+                                    >
+                                        <ListItemIcon>
+                                            <Checkbox
+                                                edge="start"
+                                                checked={isSelected}
+                                                tabIndex={-1}
+                                                disableRipple
+                                                inputProps={{ 'aria-labelledby': labelId }}
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            id={labelId}
+                                            primary={`#${invoice.invoiceNumber} - ${invoice.project.name}`}
+                                            secondary={`${invoice.invoiceDate} | Total: $${total}`}
                                         />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        id={labelId}
-                                        primary={`#${invoice.invoiceNumber} - ${invoice.project.name}`}
-                                        secondary={`${invoice.invoiceDate} | Total: $${total}`}
-                                    />
-                                </ListItemButton>
-                                <Divider variant="inset" component="li" />
-                            </React.Fragment>
-                        );
-                    })
-                )}
-            </List>
+                                    </ListItemButton>
+                                    <Divider variant="inset" component="li" />
+                                </React.Fragment>
+                            );
+                        })
+                    )}
+                </List>
+            </Box>
             
             {/* Actions Footer */}
-            <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end', gap: 2, bgcolor: '#f9f9f9' }}>
+            <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end', gap: 2, bgcolor: '#f9f9f9', borderTop: '1px solid #eee' }}>
                 <Button 
                     variant="outlined" 
                     startIcon={<DownloadIcon />} 
@@ -280,49 +282,12 @@ export default function Email() {
       </Dialog>
 
       {/* Email Preview Dialog */}
-{/* Email Preview Dialog */}
-<Dialog
-  open={emailPreviewOpen}
-  onClose={() => setEmailPreviewOpen(false)}
-  maxWidth="md"
-  fullWidth
->
-  <DialogTitle>Email Preview</DialogTitle>
-
-  <DialogContent>
-    <Paper
-      variant="outlined"
-      sx={{
-        p: 2,
-        bgcolor: '#f5f5f5',
-        fontFamily: 'monospace',
-        mb: 2,
-      }}
-    >
-      <div dangerouslySetInnerHTML={{ __html: emailPreview }} />
-    </Paper>
-
-    <Alert
-      severity="warning"
-      icon={<WarningAmberIcon />}
-      sx={{ bgcolor: '#fff4e5', color: '#663c00' }}
-    >
-      <Typography variant="subtitle2" fontWeight="bold">
-        Reminder:
-      </Typography>
-      Please attach the downloaded invoice(s) to your email before sending.
-      Browsers cannot add attachments automatically.
-    </Alert>
-  </DialogContent>
-
-  <DialogActions>
-    <Button onClick={() => setEmailPreviewOpen(false)}>CANCEL</Button>
-    <Button variant="contained" startIcon={<EmailIcon />}
-      onClick={handleSendEmailClient}>
-      OPEN EMAIL CLIENT
-    </Button>
-  </DialogActions>
-</Dialog>
+      <EmailPreviewDialog
+        open={emailPreviewOpen}
+        onClose={() => setEmailPreviewOpen(false)}
+        emailPreview={emailPreview}
+        onSend={handleSendEmailClient}
+      />
 
     </Box>
   );

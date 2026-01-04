@@ -187,7 +187,7 @@ export default function Dashboard() {
       {/* Charts Grid */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {/* Trend Chart */}
-        <Grid  size={{ xs: 12, md: 8 }}>
+        <Grid  size={{ xs: 12, md: 8 }} sx={{ height: 360 }}>
           <Paper sx={{ p: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Revenue & Hours Trends (Last 6 Months)
