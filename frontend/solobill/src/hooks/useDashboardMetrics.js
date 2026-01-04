@@ -99,9 +99,9 @@ export const useDashboardMetrics = () => {
                     clientRevenue
                 });
                 setLoading(false);
-            } catch (err) {
-                console.error("Error fetching dashboard data:", err);
-                setError(err);
+            } catch (error) {
+                console.error("Error fetching dashboard data:", error);
+                setError(error);
                 setLoading(false);
             }
         };

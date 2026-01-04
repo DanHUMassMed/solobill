@@ -51,7 +51,7 @@ export default function InvoiceView() {
           const html = env.renderString(templateHtml, {invoice: invoice});
           setRenderedHtml(html);
         } catch (error) {
-          console.error("Template rendering error", e);
+          console.error("Template rendering error", error);
         }
 
     }

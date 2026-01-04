@@ -33,6 +33,8 @@ import { invoiceRepo } from '../../db/repositories/invoiceRepository';
 import { db } from '../../db/appDB';
 import { calculateStorageUsage } from '../../utils/storageUtils';
 import { useNotification } from '../../context/NotificationContext';
+import { templateRepo } from '../../db/repositories/templateRepository';
+import { nunjucksEnv } from '../../utils/templateUtils';
 
 export default function DataManagement() {
   const [startDate, setStartDate] = useState('');
@@ -78,67 +80,31 @@ export default function DataManagement() {
         return;
       }
 
-      // Generate CSV
-      const headers = [
-        'Invoice Number', 
-        'Date', 
-        'Client', 
-        'Project', 
-        'Total Invoice Hours', 
-        'Total Invoice Amount',
-        'Line Date',
-        'Line Description',
-        'Line Hours'
-      ];
+     
+        let successMessage = '';
+        try {
+          const env = nunjucksEnv();
+          const template = await templateRepo.getActiveByType('csv');
+          if (template) {
+            const csvContent = env.renderString(template.content, {invoices: invoices});
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `invoices_${startDate}_to_${endDate}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-      const rows = [];
-      invoices.forEach(inv => {
-        const baseRow = [
-          inv.invoiceNumber,
-          inv.invoiceDate,
-          inv.client?.name || '',
-          inv.project?.name || '',
-          inv.totalHours,
-          inv.totalAmount
-        ];
+            successMessage = `Successfully exported ${invoices.length} invoices.`;
 
-        if (inv.lineItems && inv.lineItems.length > 0) {
-          inv.lineItems.forEach(item => {
-            rows.push([
-              ...baseRow,
-              item.dateDesc || '',
-              item.workDesc || '',
-              item.hours || 0
-            ]);
-          });
-        } else {
-          // Invoice with no line items
-          rows.push([
-            ...baseRow,
-            '',
-            '',
-            0
-          ]);
+          }
+        } catch (error) {
+          console.error("Template rendering error", error);
         }
-      });
 
-      const csvContent = [
-        headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-      ].join('\n');
 
-      // Trigger Download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `invoices_${startDate}_to_${endDate}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      let successMessage = `Successfully exported ${invoices.length} invoices.`;
 
       // Handle Archive (Delete)
       if (archive) {

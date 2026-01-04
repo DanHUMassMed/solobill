@@ -1,7 +1,7 @@
 invoiceNumber,invoiceDate,clientName,projectName,contractingRate,dateDesc,workDesc,lineType,hours,amount
 {% for invoice in invoices -%}
 {% for item in invoice.lineItems -%}
-{{ invoice.invoiceNumber }},'{{ invoice.invoiceDate }}','{{ invoice.client.name }}','{{ invoice.project.name }}',{{ invoice.project.contractingRate }},'{{ item.dateDesc }}','{{ item.workDesc }}','detail',{{ item.hours }},{{ item.hours * invoice.project.contractingRate }}
+{{ invoice.invoiceNumber }},{{ invoice.invoiceDate }},"{{ invoice.client.name }}","{{ invoice.project.name }}",{{ invoice.project.contractingRate }},"{{ item.dateDesc }}","{{ item.workDesc }}","detail",{{ item.hours }},{{ item.hours * invoice.project.contractingRate }}
 {% endfor -%}
-{{ invoice.invoiceNumber }},'{{ invoice.invoiceDate }}','{{ invoice.client.name }}','{{ invoice.project.name }}',{{ invoice.project.contractingRate }},'','','summary',{{ invoice.totalHours }},{{ invoice.totalAmount }}
+{{ invoice.invoiceNumber }},{{ invoice.invoiceDate }},"{{ invoice.client.name }}","{{ invoice.project.name }}",{{ invoice.project.contractingRate }},"","","summary",{{ invoice.totalHours }},{{ invoice.totalAmount }}
 {% endfor -%}

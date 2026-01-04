@@ -30,10 +30,9 @@ import { useClients } from '../../hooks/useClients';
 import { useInvoices } from '../../hooks/useInvoices';
 import { templateRepo } from '../../db/repositories/templateRepository';
 
-import nunjucks from 'nunjucks';
-import html2pdf from 'html2pdf.js';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { nunjucksEnv, generatePdfBlob, mailToHTML } from '../../utils/templateUtils';
 
 export default function Email() {
   const { clients, loading: clientsLoading } = useClients();
@@ -46,7 +45,7 @@ export default function Email() {
   const [downloadConfirmOpen, setDownloadConfirmOpen] = useState(false);
   const [emailPreviewOpen, setEmailPreviewOpen] = useState(false);
   const [mailto, setMailto] = useState('');
-  const [emailPreview, setEmailPreview] = useState({});
+  const [emailPreview, setEmailPreview] = useState('');
   const [processing, setProcessing] = useState(false);
 
   // Filter invoices for selected client
@@ -101,33 +100,12 @@ export default function Email() {
 
   const performDownload = async () => {
     setProcessing(true);
+    const blobs = [];
     try {
-      const invoiceTemplate = await templateRepo.getActiveByType('invoice');
-      if (!invoiceTemplate) {
-        alert("No active invoice template found.");
-        setProcessing(false);
-        return;
-      }
-
-      const blobs = [];
-      const env = new nunjucks.Environment();
-      env.addFilter('formatDate', (str) => str ? new Date(str).toLocaleDateString() : '');
-      env.addFilter('fixed', (num) => {
-          const n = Number(num);
-          return isNaN(n) ? '0.00' : n.toFixed(2);
-      });
-      env.addFilter('currency', (value) => {
-        if (value == null || isNaN(value)) return '$0.00';
-
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          minimumFractionDigits: 2,
-        }).format(value);
-      });
-      // Generate PDFs
+      const env = nunjucksEnv();
+      const template = await templateRepo.getActiveByType('invoice');
       for (const invoice of selectedInvoices) {
-        const html = renderInvoiceHtml(invoice, invoiceTemplate.content, env);
+        const html = env.renderString(template.content, {invoice: invoice});
         const blob = await generatePdfBlob(html);
         blobs.push({ 
             name: `Invoice-${invoice.invoiceNumber}.pdf`, 
@@ -162,34 +140,13 @@ export default function Email() {
 
   const openEmailPreview = async () => {
     setProcessing(true);
-    try {
-      const emailTemplate = await templateRepo.getActiveByType('email');
-      if (!emailTemplate) {
-        alert("No active email template found.");
-        setProcessing(false);
-        return;
-      }
-
-      const env = new nunjucks.Environment();
-      env.addFilter('formatDate', (str) => str ? new Date(str).toLocaleDateString() : '');
-      env.addFilter('fixed', (num) => {
-          const n = Number(num);
-          return isNaN(n) ? '0.00' : n.toFixed(2);
-      });
-      env.addFilter('currency', (value) => {
-        if (value == null || isNaN(value)) return '$0.00';
-
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          minimumFractionDigits: 2,
-        }).format(value);
-      });
-      const mailto_str = env.renderString(emailTemplate.content, {invoices: selectedInvoices});
+    try{
+      const env = nunjucksEnv();
+      const template = await templateRepo.getActiveByType('email');
+      const mailto_str = env.renderString(template.content, {invoices: selectedInvoices});
       setMailto(mailto_str);
-      setEmailPreview(parseMailto(mailto_str));
+      setEmailPreview(mailToHTML(mailto_str));
       setEmailPreviewOpen(true);
-
     } catch (error) {
         console.error("Email preview generation failed", error);
         alert("Failed to generate email preview.");
@@ -198,92 +155,13 @@ export default function Email() {
     }
   };
 
-  const parseMailto = (mailto) => {
-    const normalized = typeof mailto === 'string' ? mailto.trim() : '';
-    if (!normalized?.startsWith('mailto:')) return {};
-
-    const [scheme, queryString = ''] = normalized.split('?');
-    const to = decodeURIComponent(scheme.replace('mailto:', ''));
-
-    const params = new URLSearchParams(queryString);
-
-    return {
-      to,
-      subject: decodeURIComponent(params.get('subject') || ''),
-      body: decodeURIComponent(params.get('body') || ''),
-    };
-  };
-
-  
-
 
   const handleSendEmailClient = () => {
     window.location.href =mailto;
     setEmailPreviewOpen(false);
   };
 
-  // --- Helpers ---
-
-  const renderInvoiceHtml = (invoice, templateStr, env) => {
-     const rate = Number(invoice.project.contractingRate) || 0;
-     const totalHours = invoice.lineItems.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
-     const totalAmount = totalHours * rate;
-
-     const context = {
-        invoice: {
-            invoiceNumber: invoice.invoiceNumber,
-            date: invoice.invoiceDate,
-            totalHours: totalHours,
-            totalAmount: totalAmount,
-            lineItems: invoice.lineItems.map(item => ({
-                description: item.workDesc ? `${item.dateDesc} - ${item.workDesc}` : item.dateDesc,
-                hours: Number(item.hours)
-            }))
-        },
-        consultant: {
-            name: invoice.consultant.name,
-            address_l1: invoice.consultant.addressL1,
-            address_l2: invoice.consultant.addressL2,
-            address_l3: invoice.consultant.addressL3,
-            email: invoice.consultant.email
-        },
-        client: {
-            client_name: invoice.client.name,
-            client_address_l1: invoice.client.addressL1,
-            client_address_l2: invoice.client.addressL2,
-            client_address_l3: invoice.client.addressL3
-        },
-        project: {
-            project_name: invoice.project.name,
-            po_number: invoice.project.poNumber,
-            consulting_title: invoice.project.contractingTitle,
-            bill_description: invoice.project.contractingDesc,
-            consulting_rate: rate
-        }
-    };
-    return env.renderString(templateStr, context);
-  };
-
-  const generatePdfBlob = async (html) => {
-    const element = document.createElement('div');
-    element.innerHTML = html;
-    // We need to append to body to render styles properly? 
-    // html2pdf can handle off-screen elements but styles might need to be inline or present.
-    // The Invoice Template uses <style> block, so it should be fine.
-    
-    const opt = {
-      margin: 0,
-      filename: 'myfile.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    
-    // We use .output('blob')
-    return await html2pdf().set(opt).from(element).output('blob');
-  };
-
-
+  
   if (clientsLoading || invoicesLoading) {
      return <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>;
   }
@@ -349,7 +227,7 @@ export default function Email() {
                                     <ListItemText
                                         id={labelId}
                                         primary={`#${invoice.invoiceNumber} - ${invoice.project.name}`}
-                                        secondary={`${new Date(invoice.invoiceDate).toLocaleDateString()} | Total: $${total}`}
+                                        secondary={`${invoice.invoiceDate} | Total: $${total}`}
                                     />
                                 </ListItemButton>
                                 <Divider variant="inset" component="li" />
@@ -418,20 +296,10 @@ export default function Email() {
         p: 2,
         bgcolor: '#f5f5f5',
         fontFamily: 'monospace',
-        whiteSpace: 'pre-wrap',
         mb: 2,
       }}
     >
-      <Box sx={{ borderBottom: '1px solid #ddd', pb: 1, mb: 1 }}>
-        <Typography variant="body2">
-          <strong>To:</strong> {emailPreview.to || '(none)'}
-        </Typography>
-        <Typography variant="body2">
-          <strong>Subject:</strong> {emailPreview.subject || '(no subject)'}
-        </Typography>
-      </Box>
-
-      {emailPreview.body}
+      <div dangerouslySetInnerHTML={{ __html: emailPreview }} />
     </Paper>
 
     <Alert

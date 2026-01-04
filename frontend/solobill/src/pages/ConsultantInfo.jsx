@@ -35,8 +35,8 @@ export default function ConsultantInfo() {
       if (consultant.additionalFields) {
         try {
           setAdditionalFields(JSON.parse(consultant.additionalFields));
-        } catch (e) {
-          console.error("Failed to parse additional fields", e);
+        } catch (error) {
+          console.error("Failed to parse additional fields", error);
           setAdditionalFields([]);
         }
       }

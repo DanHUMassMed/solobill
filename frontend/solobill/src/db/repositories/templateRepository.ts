@@ -39,7 +39,7 @@ export class TemplateRepository extends BaseRepository<Template, string> {
     let fileName = '';
     if (id === 'default-invoice') fileName = 'invoice_template.html';
     else if (id === 'default-email') fileName = 'email_template.html';
-    else if (id === 'default-invoice-2') fileName = 'invoice_template2.html';
+    else if (id === 'default-csv') fileName = 'tocsv_template.html';
     
     if (fileName) {
         const response = await fetch(`/templates/${fileName}`);
@@ -62,6 +62,13 @@ export class TemplateRepository extends BaseRepository<Template, string> {
         name: 'System Default Email',
         type: 'email',
         file: 'email_template.html',
+        isActive: true,
+      },
+      {
+        id: 'default-csv',
+        name: 'System Default CSV Template',
+        type: 'csv',
+        file: 'tocsv_template.html',
         isActive: true,
       }
     ];

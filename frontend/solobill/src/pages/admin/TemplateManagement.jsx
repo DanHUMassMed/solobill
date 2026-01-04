@@ -46,6 +46,7 @@ const TemplateManagement = () => {
   const [templates, setTemplates] = useState([]);
   const [activeInvoiceId, setActiveInvoiceId] = useState('');
   const [activeEmailId, setActiveEmailId] = useState('');
+  const [activeCsvId, setActiveCsvId] = useState('');
   
   // Dialog states
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -71,9 +72,11 @@ const TemplateManagement = () => {
     
     const activeInvoice = all.find(t => t.type === 'invoice' && t.isActive);
     const activeEmail = all.find(t => t.type === 'email' && t.isActive);
+    const activeCsv = all.find(t => t.type === 'csv' && t.isActive);
     
     if (activeInvoice) setActiveInvoiceId(activeInvoice.id);
     if (activeEmail) setActiveEmailId(activeEmail.id);
+    if (activeCsv) setActiveCsvId(activeCsv.id);
   };
 
   useEffect(() => {
@@ -83,7 +86,8 @@ const TemplateManagement = () => {
   const handleSetActive = async (id, type) => {
     await templateRepo.setActive(id);
     if (type === 'invoice') setActiveInvoiceId(id);
-    else setActiveEmailId(id);
+    else if (type === 'email') setActiveEmailId(id);
+    else if (type === 'csv') setActiveCsvId(id);
     showSnackbar('Active template updated');
     loadTemplates();
   };
@@ -190,6 +194,9 @@ const TemplateManagement = () => {
       } else if (currentTemplate.type === 'email') {
         rendered = env.renderString(currentTemplate.content, {invoices: mockInvoices});
         rendered = mailToHTML(rendered)
+      } else if (currentTemplate.type === 'csv') {
+        rendered = env.renderString(currentTemplate.content, {invoices: mockInvoices});
+        rendered = `<pre style="white-space: pre-wrap; word-break: break-all; font-family: monospace;">${rendered}</pre>`;
       }
       return <div dangerouslySetInnerHTML={{ __html: rendered }} />;
     } catch (error) {
@@ -199,6 +206,7 @@ const TemplateManagement = () => {
 
   const invoiceTemplates = templates.filter(t => t.type === 'invoice');
   const emailTemplates = templates.filter(t => t.type === 'email');
+  const csvTemplates = templates.filter(t => t.type === 'csv');
 
   return (
     <Box>
@@ -216,7 +224,7 @@ const TemplateManagement = () => {
           Select the templates currently used for generation.
         </Typography>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth>
               <InputLabel>Active Invoice Template</InputLabel>
               <Select
@@ -230,7 +238,7 @@ const TemplateManagement = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth>
               <InputLabel>Active Email Template</InputLabel>
               <Select
@@ -239,6 +247,20 @@ const TemplateManagement = () => {
                 onChange={(e) => handleSetActive(e.target.value, 'email')}
               >
                 {emailTemplates.map(t => (
+                  <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <FormControl fullWidth>
+              <InputLabel>Active CSV Template</InputLabel>
+              <Select
+                value={activeCsvId}
+                label="Active CSV Template"
+                onChange={(e) => handleSetActive(e.target.value, 'csv')}
+              >
+                {csvTemplates.map(t => (
                   <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>
                 ))}
               </Select>
@@ -388,6 +410,7 @@ const TemplateManagement = () => {
               >
                 <MenuItem value="invoice">Invoice</MenuItem>
                 <MenuItem value="email">Email</MenuItem>
+                <MenuItem value="csv">CSV Export</MenuItem>
               </Select>
             </FormControl>
             <Box>

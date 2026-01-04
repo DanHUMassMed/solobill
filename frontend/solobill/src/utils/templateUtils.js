@@ -1,9 +1,29 @@
 import nunjucks from 'nunjucks';
+import html2pdf from 'html2pdf.js';
 
 export const nunjucksEnv = () => {
       const env = new nunjucks.Environment();
 
-      env.addFilter('formatDate', (str) => str ? new Date(str).toLocaleDateString() : '');
+      env.addFilter('formatDate', (str) => {
+        if (typeof str !== 'string') return str ?? '';
+
+        const trimmed = str.trim();
+
+        // Match YYYY-MM-DD exactly
+        const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+        if (!match) return str;
+
+        const [, y, m, d] = match;
+
+        const month = Number(m);
+        const day = Number(d);
+
+        // Basic sanity checks
+        if (month < 1 || month > 12) return str;
+        if (day < 1 || day > 31) return str;
+
+        return `${m}/${d}/${y}`;
+      });
       
       env.addFilter('fixed', (num) => {
           const n = Number(num);
@@ -22,6 +42,25 @@ export const nunjucksEnv = () => {
 
       return env  
    };
+
+export const generatePdfBlob = async (html) => {
+    const element = document.createElement('div');
+    element.innerHTML = html;
+    // We need to append to body to render styles properly? 
+    // html2pdf can handle off-screen elements but styles might need to be inline or present.
+    // The Invoice Template uses <style> block, so it should be fine.
+    
+    const opt = {
+      margin: 0,
+      filename: 'myfile.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    // We use .output('blob')
+    return await html2pdf().set(opt).from(element).output('blob');
+  };
 
 export const parseMailto = (mailto) => {
     const normalized = typeof mailto === 'string' ? mailto.trim() : '';

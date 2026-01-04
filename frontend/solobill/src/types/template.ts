@@ -1,4 +1,4 @@
-export type TemplateType = 'invoice' | 'email';
+export type TemplateType = 'invoice' | 'email' | 'csv';
 
 export interface Template {
   id: string;
