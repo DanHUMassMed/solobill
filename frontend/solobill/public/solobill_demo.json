@@ -1,0 +1,645 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-01-05T14:49:40.141Z",
+  "data": {
+    "clients": [
+      {
+        "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+        "name": "Atlas Health Systems",
+        "addressL1": "450 Medical Parkway",
+        "addressL2": "Boston, MA 02115",
+        "addressL3": "",
+        "contactNm": "Sarah Lin",
+        "billingRepName": "Accounts Payable",
+        "billingRepEmail": "ap@atlashealth.com",
+        "additionalFields": {
+          "industry": "Healthcare Technology"
+        }
+      },
+      {
+        "id": "b7d8e9f0-1234-4cde-9a10-998877665544",
+        "name": "Northstar Logistics Group",
+        "addressL1": "980 Harbor Way",
+        "addressL2": "Newark, NJ 07102",
+        "addressL3": "",
+        "contactNm": "Michael Torres",
+        "billingRepName": "Finance Department",
+        "billingRepEmail": "finance@northstarlogistics.com",
+        "additionalFields": {
+          "industry": "Supply Chain & Logistics"
+        }
+      }
+    ],
+    "projects": [
+      {
+        "id": "p101aa22-bb33-4cc4-8dd5-000000000001",
+        "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+        "name": "Clinical Decision Support AI",
+        "poNumber": "ATLAS-PO-2025-001",
+        "contractingTitle": "AI Model Development & Validation",
+        "contractingRate": "175",
+        "contractingDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+        "additionalFields": {}
+      },
+      {
+        "id": "p101aa22-bb33-4cc4-8dd5-000000000002",
+        "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+        "name": "EHR Data Pipeline Modernization",
+        "poNumber": "ATLAS-PO-2025-014",
+        "contractingTitle": "Data Engineering & MLOps Consulting",
+        "contractingRate": "165",
+        "contractingDesc": "Modernization of ETL pipelines and deployment of scalable MLOps infrastructure for clinical datasets.",
+        "additionalFields": {}
+      },
+      {
+        "id": "p101aa22-bb33-4cc4-8dd5-000000000003",
+        "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+        "name": "AI Compliance & Audit Readiness",
+        "poNumber": "",
+        "contractingTitle": "AI Governance & Risk Assessment",
+        "contractingRate": "150",
+        "contractingDesc": "Evaluation of deployed AI systems for regulatory compliance, bias mitigation, and audit readiness.",
+        "additionalFields": {}
+      },
+      {
+        "id": "p202bb33-cc44-5dd6-9ee7-000000000004",
+        "clientId": "b7d8e9f0-1234-4cde-9a10-998877665544",
+        "name": "Demand Forecasting Optimization",
+        "poNumber": "NSLG-PO-8842",
+        "contractingTitle": "Predictive Modeling for Supply Chain",
+        "contractingRate": "160",
+        "contractingDesc": "Development of forecasting models to improve inventory planning and reduce logistics costs.",
+        "additionalFields": {}
+      },
+      {
+        "id": "p202bb33-cc44-5dd6-9ee7-000000000005",
+        "clientId": "b7d8e9f0-1234-4cde-9a10-998877665544",
+        "name": "Route Optimization AI",
+        "poNumber": "",
+        "contractingTitle": "Optimization Algorithms & Simulation",
+        "contractingRate": "155",
+        "contractingDesc": "Design of AI-driven route optimization algorithms to improve delivery efficiency across regional hubs.",
+        "additionalFields": {}
+      }
+    ],
+    "invoices": [
+      {
+        "id": "42ee81f3-7733-442b-a3d6-721d78440830",
+        "invoiceNumber": "INV-251017-2MAS",
+        "invoiceDate": "2025-10-17",
+        "totalHours": 40,
+        "totalAmount": 6000,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000003",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "AI Compliance & Audit Readiness",
+          "poNumber": "",
+          "contractingTitle": "AI Governance & Risk Assessment",
+          "contractingRate": "150",
+          "contractingDesc": "Evaluation of deployed AI systems for regulatory compliance, bias mitigation, and audit readiness.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "67318e91-ae30-406e-9782-bff05c465613",
+            "dateDesc": "Week of Oct 17",
+            "workDesc": "Evaluation of deployed AI systems for regulatory compliance, bias mitigation, and audit readiness.",
+            "hours": 40
+          }
+        ]
+      },
+      {
+        "id": "64db82be-266b-45b3-8d41-ed14db2a86ce",
+        "invoiceNumber": "INV-260105-D1F4",
+        "invoiceDate": "2026-01-05",
+        "totalHours": 20,
+        "totalAmount": 3500,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000001",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Clinical Decision Support AI",
+          "poNumber": "ATLAS-PO-2025-001",
+          "contractingTitle": "AI Model Development & Validation",
+          "contractingRate": "175",
+          "contractingDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "0391ac78-42e9-4b00-a81b-512d43520542",
+            "dateDesc": "Week of Dec 26",
+            "workDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+            "hours": 20
+          }
+        ]
+      },
+      {
+        "id": "77f3897e-ec85-4c3c-904d-195466f3a7b1",
+        "invoiceNumber": "INV-251205-F6SI",
+        "invoiceDate": "2025-12-05",
+        "totalHours": 16,
+        "totalAmount": 2560,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "b7d8e9f0-1234-4cde-9a10-998877665544",
+          "name": "Northstar Logistics Group",
+          "addressL1": "980 Harbor Way",
+          "addressL2": "Newark, NJ 07102",
+          "addressL3": "",
+          "contactNm": "Michael Torres",
+          "billingRepName": "Finance Department",
+          "billingRepEmail": "finance@northstarlogistics.com",
+          "additionalFields": {
+            "industry": "Supply Chain & Logistics"
+          }
+        },
+        "project": {
+          "id": "p202bb33-cc44-5dd6-9ee7-000000000004",
+          "clientId": "b7d8e9f0-1234-4cde-9a10-998877665544",
+          "name": "Demand Forecasting Optimization",
+          "poNumber": "NSLG-PO-8842",
+          "contractingTitle": "Predictive Modeling for Supply Chain",
+          "contractingRate": "160",
+          "contractingDesc": "Development of forecasting models to improve inventory planning and reduce logistics costs.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "94752f85-2087-44d7-b44e-c24f5bdb9a4e",
+            "dateDesc": "12/02/25,12/04/25",
+            "workDesc": "Development of forecasting models to improve inventory planning and reduce logistics costs.",
+            "hours": 16
+          }
+        ]
+      },
+      {
+        "id": "91046982-b8e8-42c5-a1fc-594b9d22f8d6",
+        "invoiceNumber": "INV-260105-Z3UA",
+        "invoiceDate": "2026-01-05",
+        "totalHours": 20,
+        "totalAmount": 3000,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000003",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "AI Compliance & Audit Readiness",
+          "poNumber": "",
+          "contractingTitle": "AI Governance & Risk Assessment",
+          "contractingRate": "150",
+          "contractingDesc": "Evaluation of deployed AI systems for regulatory compliance, bias mitigation, and audit readiness.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "e617ae33-3d58-45ac-9465-4caeae343e60",
+            "dateDesc": "Week of Dec 25",
+            "workDesc": "Evaluation of deployed AI systems for regulatory compliance, bias mitigation, and audit readiness.",
+            "hours": 20
+          }
+        ]
+      },
+      {
+        "id": "9cb63650-a9ac-4807-aa41-e32415cad759",
+        "invoiceNumber": "INV-251031-FCEC",
+        "invoiceDate": "2025-10-31",
+        "totalHours": 40,
+        "totalAmount": 6400,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "b7d8e9f0-1234-4cde-9a10-998877665544",
+          "name": "Northstar Logistics Group",
+          "addressL1": "980 Harbor Way",
+          "addressL2": "Newark, NJ 07102",
+          "addressL3": "",
+          "contactNm": "Michael Torres",
+          "billingRepName": "Finance Department",
+          "billingRepEmail": "finance@northstarlogistics.com",
+          "additionalFields": {
+            "industry": "Supply Chain & Logistics"
+          }
+        },
+        "project": {
+          "id": "p202bb33-cc44-5dd6-9ee7-000000000004",
+          "clientId": "b7d8e9f0-1234-4cde-9a10-998877665544",
+          "name": "Demand Forecasting Optimization",
+          "poNumber": "NSLG-PO-8842",
+          "contractingTitle": "Predictive Modeling for Supply Chain",
+          "contractingRate": "160",
+          "contractingDesc": "Development of forecasting models to improve inventory planning and reduce logistics costs.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "fba60a44-b8fb-49a9-a664-4ee55df53f7e",
+            "dateDesc": "Week of Oct 31",
+            "workDesc": "Development of forecasting models to improve inventory planning and reduce logistics costs.",
+            "hours": 40
+          }
+        ]
+      },
+      {
+        "id": "b1b0ca86-22fc-4cd6-8855-8b69f8e2d6b9",
+        "invoiceNumber": "INV-251005-XJHJ",
+        "invoiceDate": "2025-10-05",
+        "totalHours": 20,
+        "totalAmount": 3300,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000002",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "EHR Data Pipeline Modernization",
+          "poNumber": "ATLAS-PO-2025-014",
+          "contractingTitle": "Data Engineering & MLOps Consulting",
+          "contractingRate": "165",
+          "contractingDesc": "Modernization of ETL pipelines and deployment of scalable MLOps infrastructure for clinical datasets.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "d85a6284-89b3-4ea9-a268-606774f2bc9a",
+            "dateDesc": "Week of Oct 10",
+            "workDesc": "Modernization of ETL pipelines and deployment of scalable MLOps infrastructure for clinical datasets.",
+            "hours": 20
+          }
+        ]
+      },
+      {
+        "id": "d2572463-0906-400a-8355-7e7181330aaa",
+        "invoiceNumber": "INV-251121-UEQJ",
+        "invoiceDate": "2025-11-21",
+        "totalHours": 20,
+        "totalAmount": 3300,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000002",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "EHR Data Pipeline Modernization",
+          "poNumber": "ATLAS-PO-2025-014",
+          "contractingTitle": "Data Engineering & MLOps Consulting",
+          "contractingRate": "165",
+          "contractingDesc": "Modernization of ETL pipelines and deployment of scalable MLOps infrastructure for clinical datasets.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "60277496-9d6e-4f99-b108-55be6637632e",
+            "dateDesc": "Week of Oct 21",
+            "workDesc": "Modernization of ETL pipelines and deployment of scalable MLOps infrastructure for clinical datasets.",
+            "hours": 20
+          }
+        ]
+      },
+      {
+        "id": "d640a928-15a6-46d4-b64c-3afe2a6cf910",
+        "invoiceNumber": "INV-251010-UKPA",
+        "invoiceDate": "2025-10-10",
+        "totalHours": 20,
+        "totalAmount": 3500,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000001",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Clinical Decision Support AI",
+          "poNumber": "ATLAS-PO-2025-001",
+          "contractingTitle": "AI Model Development & Validation",
+          "contractingRate": "175",
+          "contractingDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "cbecc9a4-bbc8-4542-ad00-639b0c4deea6",
+            "dateDesc": "Week of Oct 10",
+            "workDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+            "hours": 20
+          }
+        ]
+      },
+      {
+        "id": "d983346c-35b9-4720-a316-03deff12d355",
+        "invoiceNumber": "INV-251107-6ILX",
+        "invoiceDate": "2025-11-07",
+        "totalHours": 16,
+        "totalAmount": 2800,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Atlas Health Systems",
+          "addressL1": "450 Medical Parkway",
+          "addressL2": "Boston, MA 02115",
+          "addressL3": "",
+          "contactNm": "Sarah Lin",
+          "billingRepName": "Accounts Payable",
+          "billingRepEmail": "ap@atlashealth.com",
+          "additionalFields": {
+            "industry": "Healthcare Technology"
+          }
+        },
+        "project": {
+          "id": "p101aa22-bb33-4cc4-8dd5-000000000001",
+          "clientId": "a1c2e3d4-5f67-4b8c-9d10-112131415161",
+          "name": "Clinical Decision Support AI",
+          "poNumber": "ATLAS-PO-2025-001",
+          "contractingTitle": "AI Model Development & Validation",
+          "contractingRate": "175",
+          "contractingDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "4b302eca-77b1-4f24-9c64-c28066909b59",
+            "dateDesc": "11/10/25, 11/11/25",
+            "workDesc": "Design and implementation of machine learning models to assist clinicians with risk stratification and treatment recommendations.",
+            "hours": 16
+          }
+        ]
+      },
+      {
+        "id": "ec2ee3f6-2a60-4312-bade-5bad974585b3",
+        "invoiceNumber": "INV-251128-NE4O",
+        "invoiceDate": "2025-11-28",
+        "totalHours": 16,
+        "totalAmount": 2480,
+        "consultant": {
+          "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+          "name": "Alex Quantum",
+          "companyName": "Neural Ridge Consulting LLC",
+          "addressL1": "125 Innovation Drive",
+          "addressL2": "Cambridge, MA 02139",
+          "addressL3": "",
+          "email": "billing@neuralridge.ai",
+          "additionalFields": {
+            "phone": "508-678-1234",
+            "termDays": "31"
+          }
+        },
+        "client": {
+          "id": "b7d8e9f0-1234-4cde-9a10-998877665544",
+          "name": "Northstar Logistics Group",
+          "addressL1": "980 Harbor Way",
+          "addressL2": "Newark, NJ 07102",
+          "addressL3": "",
+          "contactNm": "Michael Torres",
+          "billingRepName": "Finance Department",
+          "billingRepEmail": "finance@northstarlogistics.com",
+          "additionalFields": {
+            "industry": "Supply Chain & Logistics"
+          }
+        },
+        "project": {
+          "id": "p202bb33-cc44-5dd6-9ee7-000000000005",
+          "clientId": "b7d8e9f0-1234-4cde-9a10-998877665544",
+          "name": "Route Optimization AI",
+          "poNumber": "",
+          "contractingTitle": "Optimization Algorithms & Simulation",
+          "contractingRate": "155",
+          "contractingDesc": "Design of AI-driven route optimization algorithms to improve delivery efficiency across regional hubs.",
+          "additionalFields": {}
+        },
+        "lineItems": [
+          {
+            "id": "b444261d-0f3b-490d-905f-50eb47d38c78",
+            "dateDesc": "11/24/25,11/27/25",
+            "workDesc": "Design of AI-driven route optimization algorithms to improve delivery efficiency across regional hubs.",
+            "hours": 16
+          }
+        ]
+      }
+    ],
+    "templates": [
+      {
+        "id": "default-csv",
+        "name": "System Default CSV Template",
+        "type": "csv",
+        "content": "invoiceNumber,invoiceDate,clientName,projectName,contractingRate,dateDesc,workDesc,lineType,hours,amount\n{% for invoice in invoices -%}\n{% for item in invoice.lineItems -%}\n{{ invoice.invoiceNumber }},{{ invoice.invoiceDate }},\"{{ invoice.client.name }}\",\"{{ invoice.project.name }}\",{{ invoice.project.contractingRate }},\"{{ item.dateDesc }}\",\"{{ item.workDesc }}\",\"detail\",{{ item.hours }},{{ item.hours * invoice.project.contractingRate }}\n{% endfor -%}\n{{ invoice.invoiceNumber }},{{ invoice.invoiceDate }},\"{{ invoice.client.name }}\",\"{{ invoice.project.name }}\",{{ invoice.project.contractingRate }},\"\",\"\",\"summary\",{{ invoice.totalHours }},{{ invoice.totalAmount }}\n{% endfor -%}",
+        "isDefault": true,
+        "isActive": true,
+        "createdAt": 1767623194320,
+        "updatedAt": 1767623194320
+      },
+      {
+        "id": "default-email",
+        "name": "System Default Email",
+        "type": "email",
+        "content": "{% set first = invoices[0] -%}\n{% set client = first.client -%}\n{% set consultant = first.consultant -%}\n{% set subject -%}Please find Invoices for {{ consultant.name }}{% endset -%}\n{% set body -%}Hello {{ client.billingRepName | default('Billing Team') }},\n\nPlease find the following invoice{% if invoices | length > 1 %}s{% endif %} attached for services rendered {% if client.name %}to {{ client.name }}{% endif %}:\n\n{% for inv in invoices %}\n- Invoice #{{ inv.invoiceNumber }}\n  Date: {{ inv.invoiceDate | formatDate }}{% if inv.project.poNumber %}\n  PO: {{ inv.project.poNumber }}{% endif %}\n{% endfor %}\n\nBest regards,\n{{ consultant.name }}\n{{ consultant.email }}\n{% endset -%}\nmailto:{{ client.billingRepEmail | urlencode }}?subject={{ subject | urlencode }}&body={{ body | urlencode }}",
+        "isDefault": true,
+        "isActive": true,
+        "createdAt": 1767623194319,
+        "updatedAt": 1767623194319
+      },
+      {
+        "id": "default-invoice",
+        "name": "System Default Invoice",
+        "type": "invoice",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Invoice #{{ invoice.invoiceNumber }}</title>\n    <style>\n        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; color: #333; line-height: 1.6; }\n        .invoice-box { max-width: 800px; margin: auto; padding: 40px; }\n        .header { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid #1976d2; padding-bottom: 20px; }\n        .consultant-info { text-align: right; }\n        .consultant-info h2 { margin: 0; color: #1976d2; }\n        .consultant-info p { margin: 2px 0; font-size: 0.9em; }\n        \n        .bill-to { margin-bottom: 20px; }\n        .bill-to h3 { margin: 2px 0; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }\n        .bill-to h4 { margin: 2px 0; }\n        .bill-to p { margin: 2px 0; font-size: 0.9em; }\n        \n        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }\n        .invoice-meta { text-align: left; }\n        .invoice-meta p { margin: 5px 0; }\n        \n        .project-highlight { background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #1976d2; }\n        .project-highlight h4 { margin: 0 0 10px 0; color: #1976d2; text-transform: uppercase; font-size: 0.85em; }\n        \n        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }\n        th { background: #1976d2; color: white; text-align: left; padding: 12px; font-size: 0.9em; }\n        td { padding: 12px; border-bottom: 1px solid #eee; }\n        tr:last-child td { border-bottom: none; }\n        \n        .totals-section { display: flex; justify-content: flex-end; }\n        .totals-box { width: 250px; }\n        .total-row { display: flex; justify-content: space-between; padding: 8px 0; }\n        .grand-total { border-top: 2px solid #333; margin-top: 10px; padding-top: 15px; font-weight: bold; font-size: 1.2em; color: #1976d2; }\n        \n        @media print {\n            body { padding: 0; }\n            .invoice-box { padding: 0; max-width: 100%; }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"invoice-box\">\n        <div class=\"header\">\n            <div>\n                <h1 style=\"color: #1976d2; margin: 0; font-size: 2.5em;\">INVOICE</h1>\n                <div class=\"invoice-meta\">\n                    <p><strong>Invoice #:</strong> {{ invoice.invoiceNumber }}</p>\n                    <p><strong>Date:</strong> {{ invoice.invoiceDate | formatDate }}</p>\n                    <p><strong>PO #:</strong> {{ invoice.project.poNumber }}</p>\n                </div>\n            </div>\n            <div class=\"consultant-info\">\n                <h2>{{ invoice.consultant.name }}</h2>\n                <p>{{ invoice.consultant.addressL1 }}</p>\n                <p>{{ invoice.consultant.addressL2 }}</p>\n                {% set c_addr3 = invoice.consultant.addressL3 if invoice.consultant.addressL3 is defined else '' %}\n                {% if c_addr3 %}<p>{{ c_addr3 }}</p>{% endif %}\n            </div>\n        </div>\n\n        <div class=\"details-grid\">\n            <div class=\"bill-to\">\n                <h3>BILL TO:</h3>\n                <h4>{{ invoice.client.name }}</h4>\n                <p>{{ invoice.client.addressL1 }}\n                <p>{{ invoice.client.addressL2 }}</p>\n                <p>\n                    {% set cl_addr3 = invoice.client.addressL3 if invoice.client.addressL3 is defined else '' %}\n                    {% if cl_addr3 %}{{ cl_addr3 }}{% endif %}\n                </p>\n            </div>\n\n        </div>\n\n        <div class=\"project-highlight\">\n            <h4>Service Description</h4>\n            <p style=\"margin: 0; font-weight: bold; font-size: 1.1em;\">{{ invoice.project.contractingTitle }}</p>\n            {% set b_desc = invoice.project.billDescription %}\n            {% if b_desc %}\n            <p style=\"margin: 10px 0 0 0; font-size: 0.9em; color: #555;\">{{ b_desc }}</p>\n            {% endif %}\n            <p style=\"margin: 10px 0 0 0; font-size: 0.9em;\"><strong>Rate:</strong> ${{ invoice.project.contractingRate }}/hr</p>\n            <p style=\"margin: 10px 0 0 0; font-size: 0.9em;\"><strong>Project:</strong> {{ invoice.project.name }}</p>\n        </div>\n\n        <table>\n            <thead>\n                <tr>\n                    <th>Date</th>\n                    <th>Description</th>\n                    <th style=\"text-align: right;\">Hours</th>\n                    <th style=\"text-align: right;\">Amount</th>\n                </tr>\n            </thead>\n            <tbody>\n                \n                {% for item in invoice.lineItems %}\n                <tr>\n                    <td>{{ item.dateDesc }}</td>\n                    <td>{{ item.workDesc }}</td>\n                    <td style=\"text-align: right;\">{{ item.hours }}</td>\n                    <td style=\"text-align: right;\">{{ (item.hours * invoice.project.contractingRate) | currency }}</td>\n                </tr>\n                {% endfor %}\n            </tbody>\n        </table>\n\n        <div class=\"totals-section\">\n            <div class=\"totals-box\">\n                <div class=\"total-row\">\n                    <span>Total Hours:</span>\n                    <span>{{ invoice.totalHours }}</span>\n                </div>\n                <div class=\"total-row grand-total\">\n                    <span>Amount Due:</span>\n                    <span>{{ invoice.totalAmount | currency }}</span>\n                </div>\n            </div>\n        </div>\n        <div style=\"margin-top: 40px; font-size: 0.95em; color: #555;\">\n            <p style=\"margin: 0;\">\n                <strong>Make all checks payable to {{ invoice.consultant.name }}</strong>\n            </p>\n\n            {% set term_days = invoice.consultant.additionalFields.termDays | default(30) %}\n            <p style=\"margin: 5px 0 0 0;\">\n                Total due in {{ term_days }} Days.\n            </p>\n        </div>\n\n    </div>\n</body>\n</html>\n",
+        "isDefault": true,
+        "isActive": true,
+        "createdAt": 1767623194316,
+        "updatedAt": 1767623194316
+      }
+    ],
+    "consultants": [
+      {
+        "id": "7a8f5d9e-4b6e-4f87-9b51-8b92dbe52a01",
+        "name": "Alex Quantum",
+        "companyName": "Neural Ridge Consulting LLC",
+        "addressL1": "125 Innovation Drive",
+        "addressL2": "Cambridge, MA 02139",
+        "addressL3": "",
+        "email": "billing@neuralridge.ai",
+        "additionalFields": {
+          "phone": "508-678-1234",
+          "termDays": "31"
+        }
+      }
+    ]
+  }
+}

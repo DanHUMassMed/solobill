@@ -123,7 +123,7 @@ export default function Dashboard() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <PageHeader 
-        title="Business Overview"
+        title="Billing Overview"
         actions={
           <>
             <Button 
