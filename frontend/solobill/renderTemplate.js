@@ -35,8 +35,8 @@ env.addFilter('currency', (value) => {
   }).format(value);
 });
 
-// const output = env.render('invoice_template.html', {invoice: mockInvoice});
-//console.log(output);
+const output = env.render('invoice_template.html', {invoice: mockInvoice});
+console.log(output);
 
 // const mailtoLink = env.render('email_template.html', {invoices: mockInvoices});
 
@@ -53,5 +53,5 @@ env.addFilter('currency', (value) => {
 // </html>`;
 // console.log(html);
 
-const output = env.render('tocsv_template.html', {invoices: mockInvoices});
-console.log(output);
+// const output = env.render('tocsv_template.html', {invoices: mockInvoices});
+// console.log(output);

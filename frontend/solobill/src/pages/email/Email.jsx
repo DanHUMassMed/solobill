@@ -25,7 +25,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import PageHeader from '../../components/common/PageHeader';
 import EmailPreviewDialog from './EmailPreviewDialog';
 
-import { useClients } from '../../hooks/useClients';
 import { useInvoices } from '../../hooks/useInvoices';
 import { templateRepo } from '../../db/repositories/templateRepository';
 
@@ -34,8 +33,7 @@ import { saveAs } from 'file-saver';
 import { nunjucksEnv, generatePdfBlob, mailToHTML } from '../../utils/templateUtils';
 
 export default function Email() {
-  const { clients, loading: clientsLoading } = useClients();
-  const { invoices, loading: invoicesLoading } = useInvoices();
+  const { clients, invoices, loading: invoicesLoading } = useInvoices();
   
   const [selectedClientId, setSelectedClientId] = useState('');
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState([]);
@@ -161,7 +159,7 @@ export default function Email() {
   };
 
   
-  if (clientsLoading || invoicesLoading) {
+  if (invoicesLoading) {
      return <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>;
   }
 

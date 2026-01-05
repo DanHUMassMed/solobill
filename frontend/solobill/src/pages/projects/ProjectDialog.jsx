@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   TextField,
   MenuItem
 } from '@mui/material';
-import AdditionalFields from '../../components/common/AdditionalFields';
+import {AdditionalFields} from '../../components/common/AdditionalFields';
 import FormDialog from '../../components/common/FormDialog';
 
 const initialProjectState = {
@@ -18,22 +18,16 @@ const initialProjectState = {
 };
 
 export default function ProjectDialog({ open, onClose, onSave, project, clients }) {
+  const additionalFieldsRef = useRef(null);
   const [formData, setFormData] = useState(initialProjectState);
-  const [additionalFields, setAdditionalFields] = useState([]);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (open) {
       if (project) {
         setFormData(project);
-        try {
-          setAdditionalFields(project.additionalFields ? JSON.parse(project.additionalFields) : []);
-        } catch {
-          setAdditionalFields([]);
-        }
       } else {
         setFormData(initialProjectState);
-        setAdditionalFields([]);
       }
       setErrors({});
     }
@@ -48,6 +42,11 @@ export default function ProjectDialog({ open, onClose, onSave, project, clients 
   };
 
   const handleSubmit = () => {
+        if (!additionalFieldsRef.current) {
+      // This should never happen, but makes JSX + React happy
+      return;
+    }
+    const additionalFields = additionalFieldsRef.current.getValueForSave();
     onSave(formData, additionalFields, setErrors);
   };
 
@@ -122,9 +121,9 @@ export default function ProjectDialog({ open, onClose, onSave, project, clients 
           rows={3}
         />
         
-        <AdditionalFields 
-            fields={additionalFields} 
-            onChange={setAdditionalFields} 
+        <AdditionalFields
+          ref={additionalFieldsRef}
+          value={formData.additionalFields}
         />
       </Box>
     </FormDialog>

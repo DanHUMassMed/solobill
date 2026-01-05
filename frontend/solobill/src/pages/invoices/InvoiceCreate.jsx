@@ -48,6 +48,7 @@ export default function InvoiceCreate() {
   const [consultant, setConsultant] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
   const [invoiceDate, setInvoiceDate] = useState(dayjs());
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
@@ -237,14 +238,14 @@ export default function InvoiceCreate() {
                 </Box>
                 <Box sx={{ mt: 3, p: 2, bgcolor: '#f9f9f9', borderRadius: 1 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateField 
-                    label="Invoice Date" 
-                    defaultValue={dayjs()} 
-                    onChange={(newValue) => {
-                      setInvoiceDate(newValue);
-                    }}
-                    fullWidth
-                  />
+                  <DateField
+                      label="Invoice Date"
+                      value={invoiceDate}
+                      onChange={(newValue) => {
+                        setInvoiceDate(newValue);
+                      }}
+                      fullWidth
+                    />
                 </LocalizationProvider>
 
                 </Box>

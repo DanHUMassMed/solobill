@@ -118,6 +118,17 @@
                 </div>
             </div>
         </div>
+        <div style="margin-top: 40px; font-size: 0.95em; color: #555;">
+            <p style="margin: 0;">
+                <strong>Make all checks payable to {{ invoice.consultant.name }}</strong>
+            </p>
+
+            {% set term_days = invoice.consultant.additionalFields.termDays | default(30) %}
+            <p style="margin: 5px 0 0 0;">
+                Total due in {{ term_days }} Days.
+            </p>
+        </div>
+
     </div>
 </body>
 </html>

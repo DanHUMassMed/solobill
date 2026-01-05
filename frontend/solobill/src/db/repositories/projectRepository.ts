@@ -11,6 +11,11 @@ export class ProjectRepository extends BaseRepository<Project, string> {
     getByClient(clientId: string) {
         return this.table.where('clientId').equals(clientId).toArray();
     }
+
+    deleteByClientId(clientId: string) {
+        return this.table.where('clientId').equals(clientId).delete();
+    }
+
 }
 
 export const projectRepo = new ProjectRepository();

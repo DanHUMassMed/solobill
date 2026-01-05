@@ -34,7 +34,7 @@ export const useResource = (repository, validator, resourceName) => {
             const dataToSave = {
                 ...data,
                 id: data.id || crypto.randomUUID(),
-                additionalFields: JSON.stringify(additionalFields)
+                additionalFields: additionalFields
             };
 
             if (data.id) {

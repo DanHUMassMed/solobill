@@ -6,6 +6,10 @@ export const mockConsultant = {
   addressL1: '18 Forest St',
   addressL2: 'Worcester, MA 01605',
   addressL3: '',
+  additionalFields: {
+    termDays: 40,
+    phone: '555-555-5555',
+  }
 }
 
 export const mockClient = {

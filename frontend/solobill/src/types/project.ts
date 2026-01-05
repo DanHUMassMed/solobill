@@ -1,3 +1,5 @@
+import { AdditionalFields } from './additionalFields';
+
 export interface Project {
   id: string;
   clientId: string;
@@ -6,5 +8,5 @@ export interface Project {
   contractingTitle: string;
   contractingRate: string | number;
   contractingDesc: string;
-  additionalFields?: string;
+  additionalFields?: AdditionalFields;
 }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Typography, Grid, Paper, TextField, Button, Box, Divider } from '@mui/material';
-import AdditionalFields from '../components/common/AdditionalFields';
+import {AdditionalFields} from '../components/common/AdditionalFields';
 import { useConsultant } from '../hooks/useConsultant';
 import { useNotification } from '../context/NotificationContext';
 import PageHeader from '../components/common/PageHeader';
@@ -15,8 +15,8 @@ const initialConsultantState = {
 };
 
 export default function ConsultantInfo() {
+  const additionalFieldsRef = useRef(null);
   const [formData, setFormData] = useState(initialConsultantState);
-  const [additionalFields, setAdditionalFields] = useState([]);
   const [errors, setErrors] = useState({});
 
   const { consultant, loading, saveConsultant } = useConsultant();
@@ -32,16 +32,8 @@ export default function ConsultantInfo() {
         addressL2: consultant.addressL2 || '',
         addressL3: consultant.addressL3 || '',
         email: consultant.email || '',
+        additionalFields: consultant.additionalFields || {},
       });
-      
-      if (consultant.additionalFields) {
-        try {
-          setAdditionalFields(JSON.parse(consultant.additionalFields));
-        } catch (error) {
-          console.error("Failed to parse additional fields", error);
-          setAdditionalFields([]);
-        }
-      }
     }
   }, [consultant]);
 
@@ -55,6 +47,12 @@ export default function ConsultantInfo() {
   };
 
   const handleSave = async () => {
+    if (!additionalFieldsRef.current) {
+      // This should never happen, but makes JSX + React happy
+      return;
+    }
+
+    const additionalFields = additionalFieldsRef.current.getValueForSave();
     const result = await saveConsultant(formData, additionalFields);
     
     if (!result.success && result.errors) {
@@ -160,9 +158,9 @@ export default function ConsultantInfo() {
             helperText={errors.email}
         />
 
-        <AdditionalFields 
-            fields={additionalFields} 
-            onChange={setAdditionalFields} 
+        <AdditionalFields
+          ref={additionalFieldsRef}
+          value={formData.additionalFields}
         />
         
         <Button 

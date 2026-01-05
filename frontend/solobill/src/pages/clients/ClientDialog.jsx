@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   TextField
 } from '@mui/material';
-import AdditionalFields from '../../components/common/AdditionalFields';
+import {AdditionalFields} from '../../components/common/AdditionalFields';
 import FormDialog from '../../components/common/FormDialog';
 
 const initialClientState = {
@@ -18,22 +18,16 @@ const initialClientState = {
 };
 
 export default function ClientDialog({ open, onClose, onSave, client }) {
+  const additionalFieldsRef = useRef(null);
   const [formData, setFormData] = useState(initialClientState);
-  const [additionalFields, setAdditionalFields] = useState([]);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (open) {
       if (client) {
         setFormData(client);
-        try {
-          setAdditionalFields(client.additionalFields ? JSON.parse(client.additionalFields) : []);
-        } catch {
-          setAdditionalFields([]);
-        }
       } else {
         setFormData(initialClientState);
-        setAdditionalFields([]);
       }
       setErrors({});
     }
@@ -48,6 +42,12 @@ export default function ClientDialog({ open, onClose, onSave, client }) {
   };
 
   const handleSubmit = () => {
+    if (!additionalFieldsRef.current) {
+      // This should never happen, but makes JSX + React happy
+      return;
+    }
+    const additionalFields = additionalFieldsRef.current.getValueForSave();
+
     onSave(formData, additionalFields, setErrors);
   };
 
@@ -122,9 +122,9 @@ export default function ClientDialog({ open, onClose, onSave, client }) {
           helperText={errors.billingRepEmail || "Billing Representative Email for sending the Invoice"}
         />
         
-        <AdditionalFields 
-            fields={additionalFields} 
-            onChange={setAdditionalFields} 
+        <AdditionalFields
+          ref={additionalFieldsRef}
+          value={formData.additionalFields}
         />
       </Box>
     </FormDialog>
