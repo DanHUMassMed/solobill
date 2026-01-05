@@ -27,6 +27,7 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import WarningIcon from '@mui/icons-material/Warning';
 import SdStorageIcon from '@mui/icons-material/SdStorage';
+import ScienceIcon from '@mui/icons-material/Science';
 import PageHeader from '../../components/common/PageHeader';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { invoiceRepo } from '../../db/repositories/invoiceRepository';
@@ -44,6 +45,7 @@ export default function DataManagement() {
   const [restoreFile, setRestoreFile] = useState(null);
   const [confirmRestoreOpen, setConfirmRestoreOpen] = useState(false);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const [confirmDemoOpen, setConfirmDemoOpen] = useState(false);
   const [storageData, setStorageData] = useState(null);
   const [calculatingStorage, setCalculatingStorage] = useState(false);
   
@@ -220,6 +222,44 @@ export default function DataManagement() {
     reader.readAsText(restoreFile);
   };
 
+  const handleLoadDemo = async () => {
+    setConfirmDemoOpen(false);
+    setLoading(true);
+
+    try {
+        const response = await fetch('/solobill_demo.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load demo data: ${response.statusText}`);
+        }
+        const backup = await response.json();
+
+        if (!backup.data || !backup.version) {
+           throw new Error('Invalid demo data format');
+        }
+
+        await db.transaction('rw', db.tables, async () => {
+           // Clear existing tables
+           await Promise.all(db.tables.map(table => table.clear()));
+
+           // Restore data
+           const { clients, projects, invoices, templates, consultants } = backup.data;
+           
+           if (clients?.length) await db.clients.bulkAdd(clients);
+           if (projects?.length) await db.projects.bulkAdd(projects);
+           if (invoices?.length) await db.invoices.bulkAdd(invoices);
+           if (templates?.length) await db.templates.bulkAdd(templates);
+           if (consultants?.length) await db.consultants.bulkAdd(consultants);
+        });
+
+        notify('Demo data loaded successfully', 'success');
+    } catch (error) {
+        console.error("Load demo failed", error);
+        notify(`Load demo failed: ${error.message}`, 'error');
+    } finally {
+        setLoading(false);
+    }
+  };
+
   const handleReset = async () => {
     setConfirmResetOpen(false);
     setLoading(true);
@@ -335,6 +375,16 @@ export default function DataManagement() {
                 disabled={loading}
             >
                 RESTORE FROM BACKUP
+            </Button>
+
+            <Button
+                variant="outlined"
+                color="info"
+                startIcon={<ScienceIcon />}
+                onClick={() => setConfirmDemoOpen(true)}
+                disabled={loading}
+            >
+                LOAD DEMO DATA
             </Button>
         </Stack>
       </Paper>
@@ -465,6 +515,16 @@ export default function DataManagement() {
         message="This will overwrite all current data with the backup file. This action cannot be undone. Are you sure?"
         confirmText="Restore Data"
         confirmColor="warning"
+      />
+
+      <ConfirmDialog
+        open={confirmDemoOpen}
+        onClose={() => setConfirmDemoOpen(false)}
+        onConfirm={handleLoadDemo}
+        title="Load Demo Data"
+        message="This will overwrite all current data with the demo dataset. This action cannot be undone. Are you sure?"
+        confirmText="Load Demo Data"
+        confirmColor="info"
       />
 
       <ConfirmDialog
