@@ -4,6 +4,14 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    host: true,
+    allowedHosts: [
+      'nonobligatorily-scratchy-shayla.ngrok-free.dev'
+    ],
+    port: 5174,
+  },
+
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate',
     injectRegister: false,

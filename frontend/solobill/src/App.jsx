@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
+import MobileLayout from './components/layout/MobileLayout';
+import { useDeviceProfile } from './hooks/useDeviceProfile';
 import Dashboard from './pages/Dashboard';
 import ConsultantInfo from './pages/ConsultantInfo';
 import PWABadge from './PWABadge.jsx';
@@ -22,15 +24,13 @@ import DataManagement from './pages/admin/DataManagement';
 
 import { templateRepo } from './db/repositories/templateRepository';
 
-// Simple placeholder for other pages
-const Placeholder = ({ title }) => (
-    <div style={{ padding: 20 }}>
-        <h2>{title}</h2>
-        <p>This feature is coming soon.</p>
-    </div>
-);
 
 function App() {
+  const { isTouch, isSmallScreen } = useDeviceProfile();
+
+  const Layout =
+    isTouch && isSmallScreen ? MobileLayout : MainLayout;
+
   useEffect(() => {
     // Initialize default templates on first run
     templateRepo.initDefaultTemplates();
@@ -39,7 +39,7 @@ function App() {
   return (
     <NotificationProvider>
       <Router>
-        <MainLayout>
+        <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/consultant" element={<ConsultantInfo />} />
@@ -60,7 +60,7 @@ function App() {
             <Route path="/admin/data" element={<DataManagement />} />
           </Routes>
           <PWABadge />
-        </MainLayout>
+        </Layout>
       </Router>
     </NotificationProvider>
   );
