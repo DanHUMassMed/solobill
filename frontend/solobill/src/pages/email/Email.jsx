@@ -153,9 +153,29 @@ export default function Email() {
   };
 
 
-  const handleSendEmailClient = () => {
-    window.location.href =mailto;
-    setEmailPreviewOpen(false);
+  const handleSendEmailClient = async () => {
+
+      // const shareData = {
+      //   files: [],
+      //   title: 'Shared from PWA',
+      //   text: 'Check out these files!',
+      // };
+
+      // // Check if file sharing is supported
+      // if (navigator.canShare && navigator.canShare(shareData)) {
+      //   try {
+      //     await navigator.share(shareData);
+      //     console.log('Files shared successfully');
+      //   } catch (err) {
+      //     console.error('Error sharing:', err);
+      //   }
+      // } else {
+      //   console.error('File sharing is not supported in this browser/OS.');
+      //   // Provide a fallback mechanism, e.g., a standard form upload or mailto link (without attachments)
+      // }
+    
+     window.location.href =mailto;
+     setEmailPreviewOpen(false);
   };
 
   

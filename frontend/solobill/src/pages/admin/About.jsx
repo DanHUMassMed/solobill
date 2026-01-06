@@ -18,11 +18,11 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 import versionJson from '../../../package.json';
 
 export default function About() {
-  const [checking, setChecking] = useState(false);
+  const [checking, setChecking] = useState(null);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [newVersionInfo, setNewVersionInfo] = useState(null);
   const { notify } = useNotification();
-  const currentVersion = versionJson.version;
+  const [currentVersion, setCurrentVersion] = useState(versionJson.version);
 
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -38,31 +38,45 @@ export default function About() {
     },
   })
 
-  
-self.addEventListener('message', (event) => {
-  console.log('Message received');
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    return self.skipWaiting();
-  }
-});
-  
-
-
-  const handleCheckUpdates = async () => {
-    setChecking(true);
+  const fetchVersionInfo = async (path = '/version.json') => {
     try {
-      const response = await fetch('/version.json', {
+      const response = await fetch(path, {
         cache: 'no-store',
         headers: { 'cache-control': 'no-cache' },
-      });
+        serviceWorker: 'none',
+      })
 
-      if (!response.ok) throw new Error('Failed to fetch version info');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch version info (${response.status})`)
+      }
 
-      const remoteVersionData = await response.json();
-      
-      if (remoteVersionData.version !== currentVersion) {
-        setNewVersionInfo(remoteVersionData);
-        setUpdateDialogOpen(true);
+      const data = await response.json()
+
+      if (!data?.version) {
+        throw new Error('Version field missing from version.json')
+      }
+
+      return data.version
+    } catch (err) {
+      console.error('fetchVersionInfo error:', err)
+      throw err // rethrow so callers can react
+    }
+  }
+
+  
+  const handleCheckUpdates = async () => {
+    setChecking('Checking...');
+    if (needRefresh) {
+      setUpdateDialogOpen(true);
+      setChecking(null);
+      return;
+    }
+    try {      
+      const remoteVersion = await fetchVersionInfo()
+      if (remoteVersion !== currentVersion) {
+        setNeedRefresh(true);
+        setNewVersionInfo(remoteVersion);
+        // setUpdateDialogOpen(true);
       } else {
         // Check if SW has an update waiting
         if (needRefresh) {
@@ -76,17 +90,25 @@ self.addEventListener('message', (event) => {
       console.error("Update check failed", error);
       notify('Failed to check for updates', 'error');
     } finally {
-      setChecking(false);
+      setChecking(null);
     }
   };
 
   const handleUpdateConfirm = async () => {
-    setUpdateDialogOpen(false);    
+    setChecking('Updating...');
+    setUpdateDialogOpen(false);  
+    await new Promise(r => setTimeout(r, 5000))
     await updateServiceWorker(true);
+    console.log('handleUpdateConfirm after updateServiceWorker');
+    setChecking(null);
+    const remoteVersion = await fetchVersionInfo()
+    setCurrentVersion(remoteVersion)
+    window.location.reload();
   };
 
   const handleUpdateCancel = () => {
     setUpdateDialogOpen(false);
+    setChecking(null);
   };
 
   return (
@@ -118,15 +140,19 @@ self.addEventListener('message', (event) => {
         </Box>
 
         <Divider sx={{ my: 3 }} />
-
         <Button
           variant="contained"
           startIcon={<SystemUpdateIcon />}
           onClick={handleCheckUpdates}
-          disabled={checking}
+          disabled={checking !== null}
         >
-          {checking ? 'Checking...' : 'Check for Updates'}
+          {checking
+            ? checking
+            : needRefresh
+              ? 'Update Application'
+              : 'Check for Updates'}
         </Button>
+
       </Paper>
 
       <ConfirmDialog
