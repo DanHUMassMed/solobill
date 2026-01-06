@@ -27,8 +27,8 @@ const TemplateVariableGuide = () => {
     { name: 'consultant.addressL1', description: 'Your address line one' },
     { name: 'consultant.addressL2', description: 'Your address line two' },
     { name: 'consultant.addressL3', description: 'Your address line three' },
-    { name: 'consultant.additionalFields.termDays', description: 'Billing Terms in days' },
-    { name: 'consultant.additionalFields.phone', description: 'Your phone number' },
+    { name: 'consultant.additionalFields.termDays', description: 'Billing Terms in days (Custom field)' },
+    { name: 'consultant.additionalFields.phone', description: 'Your phone number (Custom field)' },
   ];
 
   const clientVariables = [

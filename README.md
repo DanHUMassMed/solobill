@@ -1,4 +1,4 @@
-# Solobill
+# SoloBill
 
 <div align="center">
   <img src="docs/images/solobill_logo.png" alt="Solobill Logo" width="200"/>
@@ -10,7 +10,7 @@
 
 ## Overview
 
-**Solobill** is a **Progressive Web App (PWA)** designed to simplify invoicing for independent consultants. It allows you to manage clients, projects, and invoices efficiently.
+**SoloBill** is a **Progressive Web App (PWA)** designed to simplify invoicing for independent consultants. It allows you to manage clients, projects, and invoices efficiently.
 
 * **Installable**: Can be installed as a standalone application on desktop or mobile devices.  
 * **Offline-First**: Works **100% offline** after installation, ensuring productivity anywhere.  
@@ -20,7 +20,7 @@
 
 ## Motivation
 
-Solobill was originally created to address a personal need for fast, flexible invoicing. It has been designed so that others—freelancers and consultants—can also benefit from a simple, reliable, offline-first invoicing solution.
+SoloBill was originally created to address a personal need for fast, flexible invoicing. It has been designed so that others—freelancers and consultants—can also benefit from a simple, reliable, offline-first invoicing solution.
 
 ---
 
@@ -38,7 +38,7 @@ The **Dashboard** provides an at-a-glance overview of your consultancy business:
 ---
 
 ### 🗂 Data Model
-Solobill uses a **simple but extensible data model**:
+SoloBill uses a **simple but extensible data model**:
 
 * **Consultant**: Your profile and business details.  
 * **Client**: Your customers.  
@@ -46,6 +46,9 @@ Solobill uses a **simple but extensible data model**:
 * **Invoice**: Billing records for your projects.  
 
 > **Note:** The app allows you to capture extra data using the **"Additional Information"** fields, where each entry is a Name/Value pair. These names can be referenced in templates to display the corresponding values on invoices.
+
+
+<img src="docs/images/solobill_datamodel.png" alt="Solobill Data Model" width="500"/>
 
 ---
 
@@ -62,6 +65,10 @@ Solobill uses a **simple but extensible data model**:
 * **Full Backups**: Create complete backups of all data and restore them on other devices.  
 * **CSV Export**: Extract invoice and project data to CSV for Excel or downstream accounting.
 
+
+<img src="docs/images/solobill_backup.png" alt="Solobill Backup" width="500"/>
+
+
 ---
 
 ### 📧 Emailing
@@ -71,8 +78,8 @@ Solobill uses a **simple but extensible data model**:
 
 ## Getting Started as a User
 
-The latest release of Solobill is available on GitHub Pages:  
-[Access Solobill Online](https://USERNAME.github.io/solobill/)  
+The latest release of SoloBill is available on GitHub Pages:  
+[Access SoloBill Online](https://USERNAME.github.io/solobill/)  
 
 You can **install it to your device** like any PWA:
 
@@ -115,7 +122,7 @@ Contributions are welcome! You can:
 * Open Issues for bugs or new feature requests  
 * Suggest improvements to templates, dashboard features, or documentation  
 
-Your help is appreciated to make Solobill better for everyone.
+Your help is appreciated to make SoloBill better for everyone.
 
 ---
 
