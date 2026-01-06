@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StorageIcon from '@mui/icons-material/Storage';
+import InfoIcon from '@mui/icons-material/Info';
 import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
@@ -27,6 +28,12 @@ const Admin = () => {
       description: 'Export invoices to CSV and archive old records.',
       icon: <StorageIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
       path: '/admin/data'
+    },
+    {
+      title: 'About & Updates',
+      description: 'Check version and application information.',
+      icon: <InfoIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
+      path: '/admin/about'
     }
   ];
 

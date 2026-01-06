@@ -1,10 +1,11 @@
 {
   "name": "solobill",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.2.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/generate-version.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

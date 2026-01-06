@@ -21,6 +21,7 @@ import Admin from './pages/admin/Admin';
 import TemplateManagement from './pages/admin/TemplateManagement';
 import TemplateVariableGuide from './pages/admin/TemplateVariableGuide';
 import DataManagement from './pages/admin/DataManagement';
+import About from './pages/admin/About';
 
 import { templateRepo } from './db/repositories/templateRepository';
 
@@ -58,6 +59,7 @@ function App() {
             <Route path="/admin/templates" element={<TemplateManagement />} />
             <Route path="/admin/templates/guide" element={<TemplateVariableGuide />} />
             <Route path="/admin/data" element={<DataManagement />} />
+            <Route path="/admin/about" element={<About />} />
           </Routes>
           <PWABadge />
         </Layout>
