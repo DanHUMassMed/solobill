@@ -93,6 +93,13 @@ You can **install it to your device** like any PWA:
 3. Open the site in Chrome, Safari, or Edge.
 4. Tap **Add to Home Screen**.
 
+### Demo Data
+
+1. To explore the site you can load some demo data
+2. Goto Admin -> Data Management -> Load Demo Data
+
+### Suggestions and Bug Reports
+
 > To suggest new features or improvements, please open an issue or submit comments in the GitHub repository. [https://github.com/DanHUMassMed/solobill/issues](https://github.com/DanHUMassMed/solobill/issues)
 
 ---
