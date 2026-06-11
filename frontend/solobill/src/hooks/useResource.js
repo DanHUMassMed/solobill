@@ -31,6 +31,16 @@ export const useResource = (repository, validator, resourceName) => {
         }
 
         try {
+            if (repository.checkUniqueness) {
+                const isUnique = await repository.checkUniqueness(data.name, data.id, data.clientId);
+                if (!isUnique) {
+                    return {
+                        success: false,
+                        errors: { name: `${resourceName} name must be unique` }
+                    };
+                }
+            }
+
             const dataToSave = {
                 ...data,
                 id: data.id || crypto.randomUUID(),

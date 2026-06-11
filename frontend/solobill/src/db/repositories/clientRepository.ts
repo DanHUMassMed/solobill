@@ -26,6 +26,13 @@ export class ClientRepository extends BaseRepository<Client, string> {
     );
     }
 
+    async checkUniqueness(name: string, id?: string): Promise<boolean> {
+        const match = await this.table
+            .filter(c => c.name.toLowerCase() === name.trim().toLowerCase() && c.id !== id)
+            .first();
+        return !match;
+    }
+
 }
 
 export const clientRepo = new ClientRepository();

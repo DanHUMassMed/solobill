@@ -55,7 +55,7 @@ export default function ProjectDialog({ open, onClose, onSave, project, clients 
       open={open}
       onClose={onClose}
       onSave={handleSubmit}
-      title={project?.id ? 'Edit Project' : 'Add New Project'}
+      title={project?.id ? 'Edit Project' : (project?.name ? 'Clone Project' : 'Add New Project')}
     >
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
         <TextField

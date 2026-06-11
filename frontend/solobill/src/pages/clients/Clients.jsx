@@ -12,6 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useClients } from '../../hooks/useClients';
 import ClientDialog from './ClientDialog';
 import PageHeader from '../../components/common/PageHeader';
@@ -27,6 +28,16 @@ export default function Clients() {
 
   const handleOpenDialog = (client = null) => {
     setSelectedClient(client);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloneClient = (client) => {
+    const clonedClient = {
+      ...client,
+      id: '',
+      name: `${client.name} (Copy)`
+    };
+    setSelectedClient(clonedClient);
     setIsDialogOpen(true);
   };
 
@@ -125,6 +136,9 @@ export default function Clients() {
                 <>
                   <Button size="small" startIcon={<EditIcon />} onClick={() => handleOpenDialog(client)}>
                     Edit
+                  </Button>
+                  <Button size="small" startIcon={<ContentCopyIcon />} onClick={() => handleCloneClient(client)}>
+                    Clone
                   </Button>
                   <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => confirmDelete(client.id)}>
                     Delete

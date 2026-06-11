@@ -16,6 +16,16 @@ export class ProjectRepository extends BaseRepository<Project, string> {
         return this.table.where('clientId').equals(clientId).delete();
     }
 
+    async checkUniqueness(name: string, id?: string, clientId?: string): Promise<boolean> {
+        if (!clientId) return true;
+        const match = await this.table
+            .where('clientId')
+            .equals(clientId)
+            .filter(p => p.name.toLowerCase() === name.trim().toLowerCase() && p.id !== id)
+            .first();
+        return !match;
+    }
+
 }
 
 export const projectRepo = new ProjectRepository();

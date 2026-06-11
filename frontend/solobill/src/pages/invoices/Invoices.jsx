@@ -135,7 +135,7 @@ export default function Invoices() {
         </Typography>
       ) : (
         groupedData.map((client) => (
-          <Accordion key={client.id} defaultExpanded>
+          <Accordion key={client.id}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               sx={{ bgcolor: '#f5f5f5' }}
@@ -145,7 +145,7 @@ export default function Invoices() {
             </AccordionSummary>
             <AccordionDetails sx={{ p: 2 }}>
               {client.projects.map((project) => (
-                  <Accordion key={project.id} defaultExpanded sx={{ mb: 1, border: '1px solid #eee', boxShadow: 'none' }}>
+                  <Accordion key={project.id} sx={{ mb: 1, border: '1px solid #eee', boxShadow: 'none' }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{project.name}</Typography>
                           <Chip size="small" label={project.invoices.length} sx={{ ml: 2 }} variant="outlined"/>

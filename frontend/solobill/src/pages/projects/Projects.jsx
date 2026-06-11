@@ -16,6 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useProjects } from '../../hooks/useProjects';
 import ProjectDialog from './ProjectDialog';
@@ -32,6 +33,16 @@ export default function Projects() {
 
   const handleOpenDialog = (project = null) => {
     setSelectedProject(project);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloneProject = (project) => {
+    const clonedProject = {
+      ...project,
+      id: '',
+      name: `${project.name} (Copy)`
+    };
+    setSelectedProject(clonedProject);
     setIsDialogOpen(true);
   };
 
@@ -176,6 +187,9 @@ export default function Projects() {
                         <>
                           <Button size="small" startIcon={<EditIcon />} onClick={() => handleOpenDialog(project)}>
                             Edit
+                          </Button>
+                          <Button size="small" startIcon={<ContentCopyIcon />} onClick={() => handleCloneProject(project)}>
+                            Clone
                           </Button>
                           <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => confirmDelete(project.id)}>
                             Delete

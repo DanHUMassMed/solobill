@@ -56,7 +56,7 @@ export default function ClientDialog({ open, onClose, onSave, client }) {
       open={open}
       onClose={onClose}
       onSave={handleSubmit}
-      title={client?.id ? 'Edit Client' : 'Add New Client'}
+      title={client?.id ? 'Edit Client' : (client?.name ? 'Clone Client' : 'Add New Client')}
     >
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
         <TextField
