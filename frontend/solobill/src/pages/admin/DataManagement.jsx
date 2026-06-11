@@ -38,9 +38,19 @@ import { templateRepo } from '../../db/repositories/templateRepository';
 import { nunjucksEnv } from '../../utils/templateUtils';
 
 export default function DataManagement() {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [archive, setArchive] = useState(false);
+  const currentYear = new Date().getFullYear();
+  const defaultStartDate = `${currentYear}-01-01`;
+  const defaultEndDate = (() => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  })();
+
+  const [startDate, setStartDate] = useState(defaultStartDate);
+  const [endDate, setEndDate] = useState(defaultEndDate);
+  const [purge, setPurge] = useState(false);
   const [loading, setLoading] = useState(false);
   const [restoreFile, setRestoreFile] = useState(null);
   const [confirmRestoreOpen, setConfirmRestoreOpen] = useState(false);
@@ -108,8 +118,8 @@ export default function DataManagement() {
 
 
 
-      // Handle Archive (Delete)
-      if (archive) {
+      // Handle Purge (Delete)
+      if (purge) {
         let deletedCount = 0;
         for (const inv of invoices) {
             if (inv.id) {
@@ -117,7 +127,7 @@ export default function DataManagement() {
                 deletedCount++;
             }
         }
-        successMessage += ` Archived (deleted) ${deletedCount} records.`;
+        successMessage += ` Purged (deleted) ${deletedCount} records.`;
       }
 
       notify(successMessage, 'success');
@@ -289,7 +299,8 @@ export default function DataManagement() {
             <Typography variant="h6">Invoice Archive (CSV)</Typography>
         </Box>
         <Typography variant="body2" color="text.secondary" paragraph>
-            Download a detailed CSV of all invoices within a specific date range. Perfect for annual tax preparation.
+            Download a detailed CSV of all invoices within a specific date range. Perfect for annual tax preparation. 
+            <strong>Note:</strong> If purging records, we highly recommend creating a full system backup before and after the purge to prevent accidental data loss.
         </Typography>
 
         <Divider sx={{ my: 3 }} />
@@ -314,11 +325,12 @@ export default function DataManagement() {
              <FormControlLabel
                 control={
                     <Switch 
-                        checked={archive} 
-                        onChange={(e) => setArchive(e.target.checked)} 
+                        checked={purge} 
+                        onChange={(e) => setPurge(e.target.checked)} 
+                        color="error"
                     />
                 }
-                label="Archive after export"
+                label="Purge after export"
                 sx={{ whiteSpace: 'nowrap' }}
             />
         </Stack>
