@@ -1,16 +1,18 @@
 # Makefile for SoloBill Project
 # Drives installation, development, linting, and testing for both frontend and backend
 
-.PHONY: help install dev lint test clean
+.PHONY: help install dev dev-frontend dev-backend lint test clean
 
 # Help command to list available targets
 help:
 	@echo "Available commands:"
-	@echo "  make install - Install frontend and backend dependencies"
-	@echo "  make dev     - Start both frontend and backend development servers in parallel"
-	@echo "  make lint    - Run linting checks on frontend and backend"
-	@echo "  make test    - Run test suites for frontend and backend"
-	@echo "  make clean   - Clean up build artifacts and temporary files"
+	@echo "  make install      - Install frontend and backend dependencies"
+	@echo "  make dev          - Start both frontend and backend development servers in parallel"
+	@echo "  make dev-frontend - Start only the frontend development server"
+	@echo "  make dev-backend  - Start only the backend development server"
+	@echo "  make lint         - Run linting checks on frontend and backend"
+	@echo "  make test         - Run test suites for frontend and backend"
+	@echo "  make clean        - Clean up build artifacts and temporary files"
 
 # Bootstraps the environment using npm and uv
 install:
@@ -26,6 +28,16 @@ dev:
 	@trap 'kill 0' SIGINT; \
 	(cd backend && uv run uvicorn app.main:app --reload --port 7777) & \
 	(cd frontend/solobill && npm run dev)
+
+# Starts only the frontend development server
+dev-frontend:
+	@echo "Starting frontend development server..."
+	cd frontend/solobill && npm run dev
+
+# Starts only the backend development server
+dev-backend:
+	@echo "Starting backend development server..."
+	cd backend && uv run uvicorn app.main:app --reload --port 7777
 
 # Executes code formatters and static analysis
 lint:

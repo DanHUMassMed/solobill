@@ -31,8 +31,7 @@ import {
   Delete as DeleteIcon,
   RestartAlt as RestartAltIcon,
   Upload as UploadIcon,
-  HelpOutline as HelpOutlineIcon,
-  ArrowBack as ArrowBackIcon
+  HelpOutline as HelpOutlineIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { templateRepo } from '../../db/repositories/templateRepository';
@@ -211,9 +210,6 @@ const TemplateManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/admin')} sx={{ mr: 2 }}>
-            Back
-        </Button>
         <Typography variant="h4">Template Management</Typography>
       </Box>
 

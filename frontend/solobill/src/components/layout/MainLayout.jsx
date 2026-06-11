@@ -26,6 +26,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined'; 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocalService } from '../../context/LocalServiceContext';
@@ -108,6 +109,10 @@ export default function MainLayout({ children }) {
 
   const getCurrentTitle = () => {
       if (location.pathname === '/admin') return 'Admin';
+      if (location.pathname === '/admin/templates') return 'Template Management';
+      if (location.pathname === '/admin/templates/guide') return 'Template Variable Guide';
+      if (location.pathname === '/admin/data') return 'Data Management';
+      if (location.pathname === '/admin/about') return 'About SoloBill';
       const current = menuItems.find(item => item.path === location.pathname);
       return current ? current.text : 'SoloBill';
   };
@@ -126,9 +131,14 @@ export default function MainLayout({ children }) {
           >
             <MenuIcon />
           </IconButton>
-           <IconButton color="inherit" onClick={() => navigate('/')} sx={{ mr: 1 }}>
+           <IconButton color="inherit" onClick={() => navigate('/')} sx={{ mr: 1 }} aria-label="go home">
                 <HomeIcon />
            </IconButton>
+           {location.pathname.startsWith('/admin/') && (
+             <IconButton color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }} aria-label="back to admin">
+               <ArrowBackIcon />
+             </IconButton>
+           )}
           <Typography variant="h6" noWrap component="div">
             {getCurrentTitle()}
           </Typography>
