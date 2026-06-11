@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -22,7 +22,10 @@ import {
   TextField,
   Tooltip,
   Alert,
-  Snackbar
+  Snackbar,
+  Chip,
+  ListItemButton,
+  InputAdornment
 } from '@mui/material';
 import {
   Description as DescriptionIcon,
@@ -31,10 +34,16 @@ import {
   Delete as DeleteIcon,
   RestartAlt as RestartAltIcon,
   Upload as UploadIcon,
-  HelpOutline as HelpOutlineIcon
+  HelpOutline as HelpOutlineIcon,
+  Search as SearchIcon,
+  ContentCopy as ContentCopyIcon,
+  Download as DownloadIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { templateRepo } from '../../db/repositories/templateRepository';
+import { consultantRepo } from '../../db/repositories/consultantRepository';
+import { clientRepo } from '../../db/repositories/clientRepository';
+import { projectRepo } from '../../db/repositories/projectRepository';
 import { ValidationRules } from '../../utils/validation';
 import { mockInvoice, mockInvoices } from '../../utils/mockData';
 import { nunjucksEnv, mailToHTML } from '../../utils/templateUtils';
@@ -46,6 +55,11 @@ const TemplateManagement = () => {
   const [activeInvoiceId, setActiveInvoiceId] = useState('');
   const [activeEmailId, setActiveEmailId] = useState('');
   const [activeCsvId, setActiveCsvId] = useState('');
+
+  const editorRef = useRef(null);
+  const [dynamicVars, setDynamicVars] = useState({ consultant: [], client: [], project: [] });
+  const [showGuide, setShowGuide] = useState(false);
+  const [guideSearch, setGuideSearch] = useState('');
   
   // Dialog states
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -80,7 +94,116 @@ const TemplateManagement = () => {
 
   useEffect(() => {
     loadTemplates();
+
+    const scanDatabase = async () => {
+      try {
+        const [consultants, clients, projects] = await Promise.all([
+          consultantRepo.getAll(),
+          clientRepo.getAll(),
+          projectRepo.getAll()
+        ]);
+        const consultantSet = new Set();
+        const clientSet = new Set();
+        const projectSet = new Set();
+        consultants.forEach(c => c.additionalFields && Object.keys(c.additionalFields).forEach(k => consultantSet.add(k)));
+        clients.forEach(c => c.additionalFields && Object.keys(c.additionalFields).forEach(k => clientSet.add(k)));
+        projects.forEach(p => p.additionalFields && Object.keys(p.additionalFields).forEach(k => projectSet.add(k)));
+
+        setDynamicVars({
+          consultant: Array.from(consultantSet),
+          client: Array.from(clientSet),
+          project: Array.from(projectSet)
+        });
+      } catch (err) {
+        console.error("Failed to scan dynamic variables", err);
+      }
+    };
+    scanDatabase();
   }, []);
+
+  const handleInsertVariable = (path) => {
+    const textarea = editorRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const tag = `{{ ${path} }}`;
+    const newContent = text.substring(0, start) + tag + text.substring(end);
+
+    setEditedContent(newContent);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + tag.length, start + tag.length);
+    }, 0);
+  };
+
+  const getInsertableVariables = () => {
+    const list = [
+      { path: 'invoice.consultant.name', label: 'Consultant Name', category: 'Consultant' },
+      { path: 'invoice.consultant.companyName', label: 'Company Name', category: 'Consultant' },
+      { path: 'invoice.consultant.email', label: 'Email Address', category: 'Consultant' },
+      { path: 'invoice.consultant.addressL1', label: 'Address L1', category: 'Consultant' },
+
+      { path: 'invoice.client.name', label: 'Client Name', category: 'Client' },
+      { path: 'invoice.client.addressL1', label: 'Address L1', category: 'Client' },
+      { path: 'invoice.client.contactNm', label: 'Contact Name', category: 'Client' },
+      { path: 'invoice.client.billingRepName', label: 'Billing Rep Name', category: 'Client' },
+      { path: 'invoice.client.billingRepEmail', label: 'Billing Rep Email', category: 'Client' },
+
+      { path: 'invoice.project.name', label: 'Project Name', category: 'Project' },
+      { path: 'invoice.project.poNumber', label: 'PO Number', category: 'Project' },
+      { path: 'invoice.project.contractingTitle', label: 'Contracting Title', category: 'Project' },
+      { path: 'invoice.project.contractingRate', label: 'Hourly Rate', category: 'Project' },
+      { path: 'invoice.project.contractingDesc', label: 'Project Description', category: 'Project' },
+
+      { path: 'invoice.invoiceNumber', label: 'Invoice Number', category: 'Invoice' },
+      { path: 'invoice.invoiceDate', label: 'Invoice Date', category: 'Invoice' },
+      { path: 'invoice.totalHours', label: 'Total Hours', category: 'Invoice' },
+      { path: 'invoice.totalAmount', label: 'Total Amount', category: 'Invoice' },
+
+      { path: 'item.dateDesc', label: 'Item Date/Desc', category: 'Line Item' },
+      { path: 'item.workDesc', label: 'Item Work Detail', category: 'Line Item' },
+      { path: 'item.hours', label: 'Item Hours', category: 'Line Item' }
+    ];
+
+    dynamicVars.consultant.forEach(key => {
+      list.push({ path: `invoice.consultant.additionalFields.${key}`, label: `Consultant: ${key}`, category: 'Custom' });
+    });
+    dynamicVars.client.forEach(key => {
+      list.push({ path: `invoice.client.additionalFields.${key}`, label: `Client: ${key}`, category: 'Custom' });
+    });
+    dynamicVars.project.forEach(key => {
+      list.push({ path: `invoice.project.additionalFields.${key}`, label: `Project: ${key}`, category: 'Custom' });
+    });
+
+    return list;
+  };
+
+  const renderLivePreview = () => {
+    if (!currentTemplate) return null;
+    try {
+      const env = nunjucksEnv();
+      let rendered = '';
+      if (currentTemplate.type === 'invoice') {
+        rendered = env.renderString(editedContent, { invoice: mockInvoice });
+      } else if (currentTemplate.type === 'email') {
+        rendered = env.renderString(editedContent, { invoices: mockInvoices });
+        rendered = mailToHTML(rendered);
+      } else if (currentTemplate.type === 'csv') {
+        rendered = env.renderString(editedContent, { invoices: mockInvoices });
+        rendered = `<pre style="white-space: pre-wrap; word-break: break-all; font-family: monospace; padding: 10px; background: #fafafa; border: 1px solid #ddd; margin: 0;">${rendered}</pre>`;
+      }
+      return <div dangerouslySetInnerHTML={{ __html: rendered }} />;
+    } catch (error) {
+      return (
+        <Alert severity="warning" sx={{ mt: 1 }}>
+          Syntax Error: {error.message}
+        </Alert>
+      );
+    }
+  };
 
   const handleSetActive = async (id, type) => {
     await templateRepo.setActive(id);
@@ -135,6 +258,27 @@ const TemplateManagement = () => {
     setEditOpen(true);
   };
 
+  const handleDownload = (template) => {
+    try {
+      const blob = new Blob([template.content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      
+      const extension = template.type === 'csv' ? 'csv' : 'njk';
+      const sanitizedName = template.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      link.setAttribute("download", `${sanitizedName}.${extension}`);
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showSnackbar(`Downloaded ${template.name}`);
+    } catch (err) {
+      console.error("Failed to download template", err);
+      showSnackbar("Failed to download template", "error");
+    }
+  };
+
   const handleSaveEdit = async () => {
     await templateRepo.put({
       ...currentTemplate,
@@ -149,7 +293,14 @@ const TemplateManagement = () => {
   const handleUpload = async () => {
     const errors = {};
     const nameCheck = ValidationRules.required(uploadName, 'Template Name');
-    if (nameCheck !== true) errors.name = nameCheck;
+    if (nameCheck !== true) {
+      errors.name = nameCheck;
+    } else {
+      const nameExists = templates.some(t => t.name.trim().toLowerCase() === uploadName.trim().toLowerCase());
+      if (nameExists) {
+        errors.name = 'A template with this name already exists';
+      }
+    }
     
     if (!uploadFile) errors.file = 'Please select a file';
 
@@ -309,6 +460,11 @@ const TemplateManagement = () => {
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
+                    <Tooltip title="Download">
+                      <IconButton onClick={() => handleDownload(template)}>
+                        <DownloadIcon />
+                      </IconButton>
+                    </Tooltip>
                     {template.isDefault ? (
                       <Tooltip title="Reset to Default">
                         <IconButton onClick={() => handleReset(template.id)}>
@@ -359,21 +515,146 @@ const TemplateManagement = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Edit Dialog */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="lg" fullWidth>
         <DialogTitle>
           Edit Template: {currentTemplate?.name}
         </DialogTitle>
-        <DialogContent dividers>
-          <TextField
-            fullWidth
-            multiline
-            rows={20}
-            variant="outlined"
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
-            sx={{ fontFamily: 'monospace' }}
-          />
+        <DialogContent dividers sx={{ maxHeight: '80vh', overflowY: 'auto', p: 3 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            
+            {/* 1. Edit Screen / Code Editor */}
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <TextField
+                inputRef={editorRef}
+                fullWidth
+                multiline
+                rows={12}
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                placeholder="Paste or write your template code here..."
+                sx={{ 
+                  fontFamily: 'monospace',
+                  '& .MuiInputBase-root': { 
+                    fontFamily: 'monospace',
+                    fontSize: '0.875rem',
+                    alignItems: 'flex-start'
+                  }
+                }}
+              />
+            </Box>
+
+            {/* 2. Variable Guide Toggle & Expandable Guide */}
+            <Box sx={{ border: '1px solid #ddd', borderRadius: 1, overflow: 'hidden' }}>
+              <Box sx={{ p: 2, bgcolor: '#fcfcfc', display: 'flex', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  <Button 
+                    size="small" 
+                    variant={showGuide ? "contained" : "outlined"} 
+                    onClick={() => setShowGuide(!showGuide)}
+                    startIcon={showGuide ? <VisibilityIcon /> : <HelpOutlineIcon />}
+                  >
+                    {showGuide ? "Hide Variable Guide" : "Show Variable Guide"}
+                  </Button>
+                  <Typography variant="caption" color="text.secondary">
+                    Click variables to insert at cursor, or copy to clipboard.
+                  </Typography>
+                </Box>
+              </Box>
+              
+              {showGuide && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ddd' }}>
+                  <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
+                    <TextField
+                      placeholder="Search variables..."
+                      fullWidth
+                      size="small"
+                      value={guideSearch}
+                      onChange={(e) => setGuideSearch(e.target.value)}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ p: 2, maxHeight: '300px', overflowY: 'auto', bgcolor: '#fafafa' }}>
+                    {['Consultant', 'Client', 'Project', 'Invoice', 'Line Item', 'Custom'].map(cat => {
+                      const items = getInsertableVariables()
+                        .filter(v => v.category === cat)
+                        .filter(v => 
+                          v.path.toLowerCase().includes(guideSearch.toLowerCase()) || 
+                          v.label.toLowerCase().includes(guideSearch.toLowerCase())
+                        );
+                      
+                      if (items.length === 0) return null;
+                      
+                      return (
+                        <Box key={cat} sx={{ mb: 2.5 }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight="bold" sx={{ textTransform: 'uppercase', display: 'block', mb: 1 }}>
+                            {cat}
+                          </Typography>
+                          <Grid container spacing={1}>
+                            {items.map(item => (
+                              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.path}>
+                                <Box 
+                                  sx={{ 
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    border: '1px solid #eee', 
+                                    borderRadius: 1, 
+                                    bgcolor: '#fff',
+                                    overflow: 'hidden',
+                                    '&:hover': { bgcolor: '#f0f7ff' } 
+                                  }}
+                                >
+                                  <Box 
+                                    onClick={() => handleInsertVariable(item.path)}
+                                    sx={{ py: 0.5, px: 1, flexGrow: 1, cursor: 'pointer', minWidth: 0 }}
+                                    title="Click to insert at cursor"
+                                  >
+                                    <code style={{ fontSize: '0.8rem', color: '#d32f2f', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.path}</code>
+                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                                      {item.label}
+                                    </Typography>
+                                  </Box>
+                                  <IconButton 
+                                    size="small" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const textToCopy = `{{ ${item.path} }}`;
+                                      navigator.clipboard.writeText(textToCopy);
+                                      showSnackbar(`Copied ${textToCopy} to clipboard!`, 'success');
+                                    }}
+                                    sx={{ p: 0.75, mr: 0.5 }}
+                                    title="Copy Nunjucks Tag"
+                                  >
+                                    <ContentCopyIcon fontSize="small" />
+                                  </IconButton>
+                                </Box>
+                              </Grid>
+                            ))}
+                          </Grid>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              )}
+            </Box>
+
+            {/* 3. Live Render Preview */}
+            <Box sx={{ border: '1px solid #ddd', borderRadius: 1, overflow: 'hidden' }}>
+              <Box sx={{ p: 1.5, borderBottom: '1px solid #ddd', bgcolor: '#f5f5f5' }}>
+                <Typography variant="subtitle2" fontWeight="bold">Live Preview</Typography>
+              </Box>
+              <Box sx={{ p: 3, bgcolor: '#fff', minHeight: '150px', overflowX: 'auto' }}>
+                {renderLivePreview()}
+              </Box>
+            </Box>
+
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditOpen(false)}>Cancel</Button>
@@ -388,6 +669,7 @@ const TemplateManagement = () => {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
             <TextField
               label="Template Name"
+              required
               fullWidth
               value={uploadName}
               onChange={(e) => {
@@ -417,11 +699,11 @@ const TemplateManagement = () => {
                   color={uploadErrors.file ? "error" : "primary"}
                   sx={{ width: '100%', mb: 1 }}
                 >
-                  Select HTML File
+                  Select Jinja Template
                   <input
                     type="file"
                     hidden
-                    accept=".html"
+                    accept=".jinja,.jinja2,.njk,.html,.txt"
                     onChange={(e) => {
                         setUploadFile(e.target.files[0]);
                         if (uploadErrors.file) setUploadErrors({...uploadErrors, file: null});

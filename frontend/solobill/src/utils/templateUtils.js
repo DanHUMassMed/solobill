@@ -2,7 +2,10 @@ import nunjucks from 'nunjucks';
 import html2pdf from 'html2pdf.js';
 
 export const nunjucksEnv = () => {
-      const env = new nunjucks.Environment();
+      const env = new nunjucks.Environment(null, {
+        trimBlocks: true,
+        lstripBlocks: true
+      });
 
       env.addFilter('formatDate', (str) => {
         if (typeof str !== 'string') return str ?? '';
