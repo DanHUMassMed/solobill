@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Typography, 
@@ -33,6 +34,7 @@ import { saveAs } from 'file-saver';
 import { nunjucksEnv, generatePdfBlob, mailToHTML } from '../../utils/templateUtils';
 
 export default function Email() {
+  const navigate = useNavigate();
   const { clients, invoices, loading: invoicesLoading } = useInvoices();
   
   const [selectedClientId, setSelectedClientId] = useState('');
@@ -191,20 +193,39 @@ export default function Email() {
 
       {/* Client Selection */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="subtitle2" color="primary" gutterBottom>Select Client</Typography>
-        <TextField
-          select
-          fullWidth
-          value={selectedClientId}
-          onChange={handleClientChange}
-          label="Client"
-        >
-            {clients.map(client => (
-                <MenuItem key={client.id} value={client.id}>
-                  {client.name}
-                </MenuItem>
-            ))}
-        </TextField>
+        {clients.length === 0 ? (
+          <Box sx={{ py: 2, textAlign: 'center' }}>
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              No clients found. Please configure your client directory to proceed.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => navigate('/clients')}
+              sx={{ mt: 1 }}
+            >
+              Add Client
+            </Button>
+          </Box>
+        ) : (
+          <>
+            <Typography variant="subtitle2" color="primary" gutterBottom>Select Client</Typography>
+            <TextField
+              select
+              fullWidth
+              value={selectedClientId}
+              onChange={handleClientChange}
+              label="Client"
+            >
+                {clients.map(client => (
+                    <MenuItem key={client.id} value={client.id}>
+                      {client.name}
+                    </MenuItem>
+                ))}
+            </TextField>
+          </>
+        )}
       </Paper>
 
       {/* Invoices List */}
