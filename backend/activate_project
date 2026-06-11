@@ -1,0 +1,6 @@
+EXPECTED="$(cd .venv && pwd)"
+
+if [ "$VIRTUAL_ENV" != "$EXPECTED" ]; then
+    echo "🔹 Activating project .venv"
+    source .venv/bin/activate
+fi

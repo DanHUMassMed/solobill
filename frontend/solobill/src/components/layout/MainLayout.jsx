@@ -28,6 +28,8 @@ import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocalService } from '../../context/LocalServiceContext';
+
 
 const drawerWidth = 240;
 
@@ -85,6 +87,7 @@ export default function MainLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
+  const { service } = useLocalService();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -129,6 +132,17 @@ export default function MainLayout({ children }) {
           <Typography variant="h6" noWrap component="div">
             {getCurrentTitle()}
           </Typography>
+          {/* Local service status */}
+          {service ? (
+            <Typography variant="body2" sx={{ ml: 2, color: 'limegreen' }}>
+              🟢 Local service active
+            </Typography>
+          ) : (
+            <Typography variant="body2" sx={{ ml: 2, color: 'orange' }}>
+              🟡 Browser-only mode
+            </Typography>
+          )}
+
         </Toolbar>
       </AppBar>
       <Drawer

@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import ConsultantInfo from './pages/ConsultantInfo';
 import PWABadge from './PWABadge.jsx';
 import { NotificationProvider } from './context/NotificationContext';
+import { LocalServiceProvider } from "./context/LocalServiceContext"
+
 
 import Clients from './pages/clients/Clients';
 import Projects from './pages/projects/Projects';
@@ -39,6 +41,7 @@ function App() {
 
   return (
     <NotificationProvider>
+      <LocalServiceProvider>
       <Router>
         <Layout>
           <Routes>
@@ -64,6 +67,7 @@ function App() {
           <PWABadge />
         </Layout>
       </Router>
+      </LocalServiceProvider>
     </NotificationProvider>
   );
 }
